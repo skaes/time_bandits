@@ -4,70 +4,79 @@
 
 Time Bandits is a plugin which enhances Rails' controller/view/db benchmark logging.
 
+
 == Usage
 
 Without configuration, the standard Rails 'Completed line' will change
 from its default format
 
-    Completed in 56ms (View: 28, DB: 5) | 200 OK [http://127.0.0.1/jobs/info]
+  Completed in 56ms (View: 28, DB: 5) | 200 OK [http://127.0.0.1/jobs/info]
 
 to:
 
-    Completed in 56.278ms (View: 28.488, DB: 5.111(2,0)) | 200 OK [http://127.0.0.1/jobs/info]
+  Completed in 56.278ms (View: 28.488, DB: 5.111(2,0)) | 200 OK [http://127.0.0.1/jobs/info]
 
 Here "DB: 5.111(2,0)" means that 2 DB queries were executed and there were 0 SQL query cache hits.
 
-However, non-trivial applications also rather often use external services, which consume time that adds
-to your total response time, and sometimes these external services are not under your control. In these
-cases, it's very helpful to have an entry in your log file that records the time spent in the exterrnal
-service (so that you can prove that it wasn't your rails app that slowed down during your slashdotting,
-for example ;-).
+However, non-trivial applications also rather often use external services, which consume
+time that adds to your total response time, and sometimes these external services are not
+under your control. In these cases, it's very helpful to have an entry in your log file
+that records the time spent in the exterrnal service (so that you can prove that it wasn't
+your rails app that slowed down during your slashdotting, for example ;-).
 
 Additional TimeConsumers can be added to the log using the "Timebandits.add" method.
 
 Example:
 
-    TimeBandits.add TimeBandits::TimeConsumers::Memcached
-    TimeBandits.add TimeBandits::TimeConsumers::GarbageCollection.instance if GC.respond_to? :enable_stats
+  TimeBandits.add TimeBandits::TimeConsumers::Memcached
+  TimeBandits.add TimeBandits::TimeConsumers::GarbageCollection.instance if GC.respond_to? :enable_stats
 
-Here we've added two additional consumers, which are already provided with the plugin. (Note that GC
-information requires a patched ruby, (e.g. http://github.com/skaes/matzruby, branch ruby187pl202patched
-or Ruby Enterprise Edition).
+Here we've added two additional consumers, which are already provided with the
+plugin. (Note that GC information requires a patched ruby,
+(e.g. http://github.com/skaes/matzruby, branch ruby187pl202patched; or Ruby Enterprise
+Edition).
 
 With these two new time consumers, the log line changes to
 
-    Completed in 680.378ms (View: 28.488, DB: 5.111(2,0), MC: 5.382(6r,0m), GC: 120.100(1), HP: 0(2000000,546468,18682541)) | 200 OK [http://127.0.0.1/jobs/info]
+  Completed in 680.378ms (View: 28.488, DB: 5.111(2,0), MC: 5.382(6r,0m), GC: 120.100(1), HP: 0(2000000,546468,18682541)) | 200 OK [http://127.0.0.1/jobs/info]
 
-"MC: 5.382(6r,0m)" means that 6 memcache reads were performed and all keys were found in the cache (0 misses).
+"MC: 5.382(6r,0m)" means that 6 memcache reads were performed and all keys were found in
+the cache (0 misses).
 
-"GC: 120.100(1)" tells us that 1 garbage collection was triggered during the request, taking 120.100 milliseconds.
+"GC: 120.100(1)" tells us that 1 garbage collection was triggered during the request,
+taking 120.100 milliseconds.
 
-"HP: 0(2000000,546468,18682541)" shows statistics on heap usage. The format is g(s,a,m), where
+"HP: 0(2000000,546468,18682541)" shows statistics on heap usage. The format is g(s,a,m),
+where
 
-   g: heap growth during the request (#slots)
-   s: size of the heap after request processing was completed (#slots)
-   a: number of object allocations during the request (#slots)
-   m: number of bytes allocated by the ruby x_malloc call (#bytes)
+  g: heap growth during the request (#slots)
+  s: size of the heap after request processing was completed (#slots)
+  a: number of object allocations during the request (#slots)
+  m: number of bytes allocated by the ruby x_malloc call (#bytes)
+
+This format makes it easy to run a tail on a production log and grep for heap size
+increasing actions:
+
+  tail -f production.log | fgrep 'Completed in' | fgrep -v 'HP: 0'
 
 It's pretty easy to write additional time consumers; please refer to the source code.
 
 
 == Prerequisites
 
-Rails 2.3.2, 2.3.3 or 2.3.4 The plugin will raise an error if you try
-to use it with a different version.
+Rails 2.3.2, 2.3.3 or 2.3.4 The plugin will raise an error if you try to use it with a
+different version.
 
-A ruby with the railsbench GC patches applied, if you want to include
-GC and heap size information in the completed line. This is very
-useful, especially if you want to analyze your rails logs using logjam
-(see http://github.com/alpinegizmo/logjam/).
+A ruby with the railsbench GC patches applied, if you want to include GC and heap size
+information in the completed line. This is very useful, especially if you want to analyze
+your rails logs using logjam (see http://github.com/alpinegizmo/logjam/).
 
 
 == History
 
-This plugin started from the code of the 'custom_benchmark' plugin
-written by tylerkovacs. However, we changed so much of the code that
-is is practically a full rewrite, hence we changed the name.
+This plugin started from the code of the 'custom_benchmark' plugin written by
+tylerkovacs. However, we changed so much of the code that is is practically a full
+rewrite, hence we changed the name.
 
 
 == License
