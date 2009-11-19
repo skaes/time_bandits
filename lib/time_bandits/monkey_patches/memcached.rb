@@ -25,16 +25,25 @@ class Memcached
   end
 
   def get_with_benchmark(key, marshal = true)
+    @@cache_touches += 1
     if key.is_a?(Array)
-      results = nil
-      @@cache_latency += Benchmark.realtime{ results = get_without_benchmark(key, marshal) }
-      @@cache_touches += 1
+      results = []
+      @@cache_latency += Benchmark.realtime do
+        begin
+          results = get_without_benchmark(key, marshal)
+        rescue Memcached::NotFound
+        end
+      end
       @@cache_misses += key.size - results.size
       results
     else
       val = nil
-      @@cache_latency += Benchmark.realtime{ val = get_without_benchmark(key, marshal) }
-      @@cache_touches += 1
+      @@cache_latency += Benchmark.realtime do
+        begin
+          val = get_without_benchmark(key, marshal)
+        rescue Memcached::NotFound
+        end
+      end
       @@cache_misses += 1 if val.nil?
       val
     end

@@ -31,7 +31,32 @@
 # =========================================================================================================
 
 module TimeBandits
- # make active support autoloading happy
+  mattr_accessor :time_bandits
+  self.time_bandits = []
+  def self.add(bandit)
+    self.time_bandits << bandit unless self.time_bandits.include?(bandit)
+  end
+
+  def self.reset
+    time_bandits.each{|b| b.reset}
+  end
+
+  def self.consumed
+    time_bandits.map{|b| b.consumed}.sum
+  end
+
+  def self.runtime
+    time_bandits.map{|b| b.runtime}.join(", ")
+  end
+
+  def self.benchmark(title="Completed in", logger=RAILS_DEFAULT_LOGGER)
+    reset
+    result = nil
+    seconds = Benchmark.realtime { result = yield }
+    consumed # needs to be called for DB time consumer
+    logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime})"
+    result
+  end
 end
 
 require 'time_bandits/monkey_patches/activerecord_adapter'
@@ -39,8 +64,6 @@ require 'time_bandits/monkey_patches/activerecord_adapter'
 module ActionController #:nodoc:
   module TimeBanditry #:nodoc:
     def self.included(base)
-      base.extend(ClassMethods)
-
       base.class_eval do
         alias_method_chain :perform_action, :time_bandits
 
@@ -54,31 +77,19 @@ module ActionController #:nodoc:
         end
 
         alias_method :render, :render_with_benchmark
-
-        # register database time consumer
-        time_bandit TimeBandits::TimeConsumers::Database.new
-      end
-    end
-
-    module ClassMethods
-      def time_bandit(bandit)
-        write_inheritable_attribute(:time_bandits,
-            (read_inheritable_attribute(:time_bandits) || []) << bandit)
       end
 
-      def time_bandits
-        @time_bandits ||= read_inheritable_attribute(:time_bandits) || []
-      end
+      TimeBandits.add TimeBandits::TimeConsumers::Database.instance
     end
 
     def render_with_benchmark(options = nil, extra_options = {}, &block)
       if logger
-        before_rendering = other_time_consumed_so_far
+        before_rendering = TimeBandits.consumed
 
         render_output = nil
         @view_runtime = Benchmark::realtime { render_output = render_without_benchmark(options, extra_options, &block) }
 
-        other_time_consumed_during_rendering = other_time_consumed_so_far - before_rendering
+        other_time_consumed_during_rendering = TimeBandits.consumed - before_rendering
         @view_runtime -= other_time_consumed_during_rendering
 
         render_output
@@ -89,7 +100,7 @@ module ActionController #:nodoc:
 
     def perform_action_with_time_bandits
       if logger
-        reset_other_time_consumed_so_far
+        TimeBandits.reset
 
         seconds = [ Benchmark::measure{ perform_action_without_time_bandits }.real, 0.0001 ].max
 
@@ -97,7 +108,7 @@ module ActionController #:nodoc:
 
         log_message << " ("
         log_message << view_runtime
-        self.class.time_bandits.each do |bandit|
+        TimeBandits.time_bandits.each do |bandit|
           log_message << ", #{bandit.runtime}"
         end
         log_message << ")"
@@ -113,13 +124,6 @@ module ActionController #:nodoc:
     end
 
     private
-    def reset_other_time_consumed_so_far
-      self.class.time_bandits.each{|bandit| bandit.reset}
-    end
-
-    def other_time_consumed_so_far
-      self.class.time_bandits.map{|bandit| bandit.consumed}.sum
-    end
 
     def view_runtime
       "View: %.3f" % ((@view_runtime||0) * 1000)

@@ -11,6 +11,11 @@ module TimeBandits
         GC.enable_stats
         reset
       end
+      private :initialize
+
+      def self.instance
+        @instance ||= new
+      end
 
       if GC.respond_to? :heap_slots
 

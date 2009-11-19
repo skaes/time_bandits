@@ -23,12 +23,12 @@ cases, it's very helpful to have an entry in your log file that records the time
 service (so that you can prove that it wasn't your rails app that slowed down during your slashdotting,
 for example ;-).
 
-Additional TimeConsumers can be added to the log using the "time_bandit" method.
+Additional TimeConsumers can be added to the log using the "Timebandits.add" method.
 
 Example:
 
-    time_bandit TimeBandits::TimeConsumers::Memcached
-    time_bandit TimeBandits::TimeConsumers::GarbageCollection.new if GC.respond_to? :enable_stats
+    TimeBandits.add TimeBandits::TimeConsumers::Memcached
+    TimeBandits.add TimeBandits::TimeConsumers::GarbageCollection.instance if GC.respond_to? :enable_stats
 
 Here we've added two additional consumers, which are already provided with the plugin. (Note that GC
 information requires a patched ruby, (e.g. http://github.com/skaes/matzruby, branch ruby187pl202patched

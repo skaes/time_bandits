@@ -14,6 +14,11 @@ module TimeBandits
         @call_count = 0
         @query_cache_hits = 0
       end
+      private :initialize
+
+      def self.instance
+        @instance ||= new
+      end
 
       def reset
         ActiveRecord::Base.connection.reset_query_cache_hits
