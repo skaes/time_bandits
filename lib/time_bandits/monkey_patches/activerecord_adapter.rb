@@ -3,7 +3,7 @@
 # to count the number of sql statements being executed.
 # it needs to be adapted to each new rails version
 
-raise "AR abstract adapter monkey patch for custom benchmarking is not compatible with your rails version" unless %w(2.3.2 2.3.3 2.3.4).include?(Rails::VERSION::STRING)
+raise "AR abstract adapter monkey patch for custom benchmarking is not compatible with your rails version" unless %w(2.3.2 2.3.3 2.3.4 2.3.5).include?(Rails::VERSION::STRING)
 
 module ActiveRecord
   module ConnectionAdapters
