@@ -68,7 +68,7 @@ module TimeBandits
           allocated_objects = self.allocated_objects
           allocated_size = self.allocated_size
           GCHacks.heap_dump if heap_growth > 0 && @@heap_dumps_enabled
-          "GC: %.3f(%d), HP: %d(%d,%d,%d)" % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size]
+          "GC: %.3f(%d) | HP: %d(%d,%d,%d)" % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size]
         end
 
       else
