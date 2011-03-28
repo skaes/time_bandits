@@ -64,11 +64,7 @@ module ActionController #:nodoc:
     def process_action(event)
       payload   = event.payload
       additions = ActionController::Base.log_process_action(payload)
-
-      message = "Completed #{payload[:status]} #{Rack::Utils::HTTP_STATUS_CODES[payload[:status]]} in %.0fms" % event.duration
-      message << " (#{additions.join(" | ")})" unless additions.blank?
-
-      info message
+      Thread.current[:time_bandits_completed_info] = [event.duration, additions]
     end
   end
 

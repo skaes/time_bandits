@@ -6,10 +6,17 @@ module Rails
 
       def call(env)
         start_time = before_dispatch(env)
-        @app.call(env)
+        result = @app.call(env)
       ensure
         run_time = Time.now - start_time
-        info "Request processing completed in #{sprintf("%.1f", run_time*1000)}ms"
+        status = result.first
+        duration, additions = Thread.current[:time_bandits_completed_info]
+        puts additions.inspect
+        (additions ||= []).insert(0, "Controller: %.1f" % duration)
+
+        message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms (#{additions.join(' | ')})" % (run_time*1000)
+        info message
+
         after_dispatch(env)
       end
 
