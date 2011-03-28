@@ -21,22 +21,34 @@ module TimeBandits
       end
 
       def reset
-        ActiveRecord::Base.connection.reset_query_cache_hits
-        ActiveRecord::Base.connection.reset_call_count
-        ActiveRecord::Base.connection.reset_runtime
+        reset_stats
         @call_count = 0
         @consumed = 0.0
         @query_cache_hits = 0
       end
 
       def consumed
-        @query_cache_hits = ActiveRecord::Base.connection.reset_query_cache_hits
-        @call_count += ActiveRecord::Base.connection.reset_call_count
-        @consumed += ActiveRecord::Base.connection.reset_runtime
+        hits, calls, time = reset_stats
+        @query_cache_hits += hits
+        @call_count += calls
+        @consumed += time
       end
 
       def runtime
         sprintf "DB: %.3f(%d,%d)", @consumed * 1000, @call_count, @query_cache_hits
+      end
+
+      private
+      def all_connections
+        ActiveRecord::Base.connection_handler.connection_pools.values.map{|pool| pool.connections}.flatten
+      end
+
+      def reset_stats
+        connections = all_connections
+        hits  = connections.map{|c| c.reset_query_cache_hits}.sum
+        calls = connections.map{|c| c.reset_call_count}.sum
+        time  = connections.map{|c| c.reset_runtime}.sum
+        [hits, calls, time]
       end
     end
   end

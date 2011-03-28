@@ -62,13 +62,24 @@ module TimeBandits
           GC.heap_slots - @heap_slots
         end
 
+        if GC.respond_to? :heap_slots_live_after_last_gc
+          def live_data_set_size
+            GC.heap_slots_live_after_last_gc
+          end
+        else
+          def live_data_set_size
+            0
+          end
+        end
+
         def runtime
           heap_slots = GC.heap_slots
           heap_growth = self.heap_growth
           allocated_objects = self.allocated_objects
           allocated_size = self.allocated_size
           GCHacks.heap_dump if heap_growth > 0 && @@heap_dumps_enabled
-          "GC: %.3f(%d), HP: %d(%d,%d,%d)" % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size]
+          "GC: %.3f(%d), HP: %d(%d,%d,%d,%d)" %
+            [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
         end
 
       else

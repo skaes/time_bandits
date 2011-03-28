@@ -52,9 +52,18 @@ module TimeBandits
   def self.benchmark(title="Completed in", logger=RAILS_DEFAULT_LOGGER)
     reset
     result = nil
-    seconds = Benchmark.realtime { result = yield }
+    e = nil
+    seconds = Benchmark.realtime do
+      begin
+        result = yield
+      rescue Exception => e
+        logger.error "Exception: #{e}"
+      end
+    end
     consumed # needs to be called for DB time consumer
-    logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime})"
+    rc = e ? "500 Internal Server Error" : "200 OK"
+    logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime}) | #{rc}"
+    raise e if e
     result
   end
 end
@@ -66,6 +75,7 @@ module ActionController #:nodoc:
     def self.included(base)
       base.class_eval do
         alias_method_chain :perform_action, :time_bandits
+        alias_method_chain :rescue_action, :time_bandits
 
         # if timebandits are used, the default benchmarking is
         # disabled. As alias_method_chain is unfriendly to extensions,
@@ -120,6 +130,32 @@ module ActionController #:nodoc:
         response.headers["X-Runtime"] = "#{sprintf("%.0f", seconds * 1000)}ms"
       else
         perform_action_without_time_bandits
+      end
+    end
+
+    def rescue_action_with_time_bandits(exception)
+      # HACK!
+      if logger && !caller.any?{|c| c =~ /perform_action_without_time_bandits/ }
+        TimeBandits.reset
+
+        seconds = [ Benchmark::measure{ rescue_action_without_time_bandits(exception) }.real, 0.0001 ].max
+
+        log_message  = "Completed in #{sprintf("%.3f", seconds * 1000)}ms"
+
+        log_message << " ("
+        log_message << view_runtime
+        TimeBandits.time_bandits.each do |bandit|
+          log_message << ", #{bandit.runtime}"
+        end
+        log_message << ")"
+
+        log_message << " | #{response.status}"
+        log_message << " [#{complete_request_uri rescue "unknown"}]"
+
+        logger.info(log_message)
+        response.headers["X-Runtime"] = "#{sprintf("%.0f", seconds * 1000)}ms"
+      else
+        rescue_action_without_time_bandits(exception)
       end
     end
 
