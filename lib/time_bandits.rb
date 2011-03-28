@@ -20,9 +20,18 @@ module TimeBandits
   def self.benchmark(title="Completed in", logger=Rails.logger)
     reset
     result = nil
-    seconds = Benchmark.realtime { result = yield }
+    e = nil
+    seconds = Benchmark.realtime do
+      begin
+        result = yield
+      rescue Exception => e
+        logger.error "Exception: #{e}"
+      end
+    end
     consumed # needs to be called for DB time consumer
-    logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime})"
+    rc = e ? "500 Internal Server Error" : "200 OK"
+    logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime}) | #{rc}"
+    raise e if e
     result
   end
 end
