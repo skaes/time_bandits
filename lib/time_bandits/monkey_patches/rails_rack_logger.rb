@@ -11,7 +11,6 @@ module Rails
         run_time = Time.now - start_time
         status = result.first
         duration, additions = Thread.current[:time_bandits_completed_info]
-        puts additions.inspect
         (additions ||= []).insert(0, "Controller: %.1f" % duration)
 
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms (#{additions.join(' | ')})" % (run_time*1000)
