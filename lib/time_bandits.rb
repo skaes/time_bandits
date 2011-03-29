@@ -1,4 +1,17 @@
+require 'active_support/core_ext'
+
 module TimeBandits
+
+  module TimeConsumers
+    autoload :Database,          'time_bandits/time_consumers/database'
+    autoload :GarbageCollection, 'time_bandits/time_consumers/garbage_collection'
+    autoload :JMX,               'time_bandits/time_consumers/jmx'
+    autoload :MemCache,          'time_bandits/time_consumers/mem_cache'
+    autoload :Memcached,         'time_bandits/time_consumers/memcached'
+  end
+
+  require 'time_bandits/railtie' if defined?(Rails)
+
   mattr_accessor :time_bandits
   self.time_bandits = []
   def self.add(bandit)

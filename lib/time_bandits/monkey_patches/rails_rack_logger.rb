@@ -5,13 +5,14 @@ module Rails
     class Logger
 
       def call(env)
+        Thread.current[:time_bandits_completed_info] = nil
         start_time = before_dispatch(env)
         result = @app.call(env)
       ensure
         run_time = Time.now - start_time
         status = result.first
         duration, additions = Thread.current[:time_bandits_completed_info]
-        (additions ||= []).insert(0, "Controller: %.1f" % duration)
+        (additions ||= []).insert(0, "Controller: %.1fms" % duration)
 
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms (#{additions.join(' | ')})" % (run_time*1000)
         info message

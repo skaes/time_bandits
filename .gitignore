@@ -1,1 +1,4 @@
 rdoc
+pkg/*
+*.gem
+.bundle
