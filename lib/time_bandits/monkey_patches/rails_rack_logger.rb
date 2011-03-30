@@ -29,7 +29,8 @@ module Rails
         status = result.first
         duration, additions = Thread.current[:time_bandits_completed_info]
 
-        message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms (#{additions.join(' | ')})" % (run_time*1000)
+        message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms"
+        message << " (#{additions.join(' | ')})" % (run_time*1000) unless additions.blank?
         info message
 
         ActiveSupport::LogSubscriber.flush_all!
