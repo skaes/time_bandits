@@ -33,7 +33,7 @@ module TimeBandits
       end
 
       def runtime
-        sprintf "ActiveRecord: %.1fms(%d queries, %d cachehits)", *info
+        sprintf "ActiveRecord: %.3fms(%dq,%dh)", *info
       end
 
       private
