@@ -1,2 +1,3 @@
 * make memcache consumers thread safe
 * test memcache consumers against a rails 3 app
+* maybe use ActiveSupport::Notifications everywhere?
