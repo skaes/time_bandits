@@ -8,11 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Stefan Kaes"]
   s.email       = ["skaes@railsexpress.de"]
-  s.homepage    = "https://github.com/skaes/time_bandits"
-  s.summary     = %q{Custom performance logging for Rails}
-  s.description = %q{Enables customizable performance logging for Rails applications}
-
-  s.rubyforge_project = "time_bandits"
+  s.homepage    = "https://github.com/skaes/time_bandits/tree/rails3"
+  s.summary     = "Custom performance logging for Rails"
+  s.description = "Rails 3 Completed Line on Steroids"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
