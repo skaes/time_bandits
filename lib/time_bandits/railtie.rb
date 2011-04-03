@@ -10,7 +10,7 @@ module TimeBandits
 
       ActiveSupport.on_load(:active_record) do
         require 'time_bandits/monkey_patches/active_record'
-        TimeBandits.add TimeBandits::TimeConsumers::Database.instance
+        TimeBandits.add TimeBandits::TimeConsumers::Database
       end
     end
 

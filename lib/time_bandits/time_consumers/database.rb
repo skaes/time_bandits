@@ -1,41 +1,39 @@
 # this consumer gets installed automatically by the plugin
 # if this were not so
 #
-#   TimeBandit.add TimeBandits::TimeConsumers::Database.new
+#   TimeBandit.add TimeBandits::TimeConsumers::Database
 #
 # would do the job
 
 module TimeBandits
   module TimeConsumers
-    # provide a time consumer interface to ActiveRecord for perform_action_with_benchmark and render_with_benchmark
-    class Database
-      def initialize
-        @consumed = 0.0
-        @call_count = 0
-        @query_cache_hits = 0
-      end
-      private :initialize
+    # provide a time consumer interface to ActiveRecord
+    module Database
+      extend self
 
-      def self.instance
-        @instance ||= new
+      def info
+        Thread.current[:time_bandits_database_info] ||= [0.0, 0, 0]
+      end
+
+      def info=(info)
+        Thread.current[:time_bandits_database_info] = info
       end
 
       def reset
         reset_stats
-        @call_count = 0
-        @consumed = 0.0
-        @query_cache_hits = 0
+        self.info = [0.0, 0, 0]
       end
 
       def consumed
-        hits, calls, time = reset_stats
-        @query_cache_hits += hits
-        @call_count += calls
-        @consumed += time
+        time, calls, hits = reset_stats
+        i = self.info
+        i[2] += hits
+        i[1] += calls
+        i[0] += time
       end
 
       def runtime
-        sprintf "ActiveRecord: %.1fms(%d queries, %d cachehits)", @consumed, @call_count, @query_cache_hits
+        sprintf "ActiveRecord: %.1fms(%d queries, %d cachehits)", *info
       end
 
       private
@@ -45,7 +43,7 @@ module TimeBandits
         hits  = s.reset_query_cache_hits
         calls = s.reset_call_count
         time  = s.reset_runtime
-        [hits, calls, time]
+        [time, calls, hits]
       end
     end
   end
