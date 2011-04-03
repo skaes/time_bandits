@@ -1,7 +1,7 @@
 # this consumer gets installed automatically by the plugin
 # if this were not so
 #
-#   time_bandit TimeBandits::TimeConsumers::Database.new
+#   TimeBandit.add TimeBandits::TimeConsumers::Database.new
 #
 # would do the job
 
@@ -35,19 +35,16 @@ module TimeBandits
       end
 
       def runtime
-        sprintf "DB: %.3f(%d,%d)", @consumed * 1000, @call_count, @query_cache_hits
+        sprintf "ActiveRecord: %.1fms(%d queries, %d cachehits)", @consumed, @call_count, @query_cache_hits
       end
 
       private
-      def all_connections
-        ActiveRecord::Base.connection_handler.connection_pools.values.map{|pool| pool.connections}.flatten
-      end
 
       def reset_stats
-        connections = all_connections
-        hits  = connections.map{|c| c.reset_query_cache_hits}.sum
-        calls = connections.map{|c| c.reset_call_count}.sum
-        time  = connections.map{|c| c.reset_runtime}.sum
+        s = ActiveRecord::LogSubscriber
+        hits  = s.reset_query_cache_hits
+        calls = s.reset_call_count
+        time  = s.reset_runtime
         [hits, calls, time]
       end
     end
