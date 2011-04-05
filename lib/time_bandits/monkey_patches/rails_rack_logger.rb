@@ -25,7 +25,7 @@ module Rails
       end
 
       def after_dispatch(env, result, run_time)
-        status = result.first || 500
+        status = result ? result.first : 500
         duration, additions = Thread.current[:time_bandits_completed_info]
 
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % (run_time*1000)
