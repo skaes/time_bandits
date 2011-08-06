@@ -1,10 +1,12 @@
-# a time consumer implementation for jruby, using jxm
+# a time consumer implementation for jruby, using jmx
 #
 # the gc counts and times reported are summed over all the garbage collectors
 # heap_growth reflects changes in the committed size of the java heap
 # heap_size is the committed size of the java heap
 # allocated_size reflects changes in the active (used) part of the java heap
 # java non-heap memory is not reported
+
+require 'jmx' if defined? JRUBY_VERSION
 
 module TimeBandits
   module TimeConsumers
@@ -28,7 +30,7 @@ module TimeBandits
       def gc_time
         @collectors.to_array.map {|gc| @server[gc].collection_time}.sum
       end
-      
+
       def gc_collections
         @collectors.to_array.map {|gc| @server[gc].collection_count}.sum
       end
@@ -36,7 +38,7 @@ module TimeBandits
       def heap_size
         @memory_bean.heap_memory_usage.committed
       end
-      
+
       def heap_usage
         @memory_bean.heap_memory_usage.used
       end
@@ -47,7 +49,7 @@ module TimeBandits
         @heap_committed = heap_size
         @heap_used = heap_usage
       end
-      
+
       def collections_delta
         gc_collections - @collections
       end
@@ -63,7 +65,7 @@ module TimeBandits
       def usage_growth
         heap_usage - @heap_used
       end
-      
+
       def allocated_objects
         0
       end

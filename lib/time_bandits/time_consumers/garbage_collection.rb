@@ -72,14 +72,19 @@ module TimeBandits
           end
         end
 
+        if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
+          GCFORMAT = "GC: %.3f(%d) | HP: %d(%d,%d,%d,%d)"
+        else
+          GCFORMAT= "GC: %.3f(%d), HP: %d(%d,%d,%d,%d)"
+        end
+
         def runtime
           heap_slots = GC.heap_slots
           heap_growth = self.heap_growth
           allocated_objects = self.allocated_objects
           allocated_size = self.allocated_size
-          GCHacks.heap_dump if heap_growth > 0 && @@heap_dumps_enabled
-          "GC: %.3f(%d) | HP: %d(%d,%d,%d,%d)" %
-            [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
+          GCHacks.heap_dump if heap_growth > 0 && @@heap_dumps_enabled && defined?(GCHacks)
+          GCFORMAT % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
         end
 
       else

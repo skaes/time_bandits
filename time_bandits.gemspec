@@ -8,15 +8,15 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Stefan Kaes"]
   s.email       = ["skaes@railsexpress.de"]
-  s.homepage    = "https://github.com/skaes/time_bandits/tree/rails3"
+  s.homepage    = "https://github.com/skaes/time_bandits/"
   s.summary     = "Custom performance logging for Rails"
-  s.description = "Rails 3 Completed Line on Steroids"
+  s.description = "Rails Completed Line on Steroids"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency("activesupport",         ["~> 3.0"])
+  s.add_runtime_dependency("activesupport",         [">= 2.3.2"])
 end
 

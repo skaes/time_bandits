@@ -3,14 +3,18 @@ require 'active_support/core_ext'
 module TimeBandits
 
   module TimeConsumers
-    autoload :Database,          'time_bandits/time_consumers/database'
+    if defined?(Rails) && Rails::VERSION::STRING < "3.0"
+      autoload :Database,          'time_bandits/time_consumers/database_rails2'
+    else
+      autoload :Database,          'time_bandits/time_consumers/database'
+    end
     autoload :GarbageCollection, 'time_bandits/time_consumers/garbage_collection'
     autoload :JMX,               'time_bandits/time_consumers/jmx'
     autoload :MemCache,          'time_bandits/time_consumers/mem_cache'
     autoload :Memcached,         'time_bandits/time_consumers/memcached'
   end
 
-  require 'time_bandits/railtie' if defined?(Rails)
+  require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
 
   mattr_accessor :time_bandits
   self.time_bandits = []
