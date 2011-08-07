@@ -18,6 +18,7 @@ module TimeBandits
 
   mattr_accessor :time_bandits
   self.time_bandits = []
+
   def self.add(bandit)
     self.time_bandits << bandit unless self.time_bandits.include?(bandit)
   end
@@ -34,6 +35,12 @@ module TimeBandits
     time_bandits.map{|b| b.runtime}.join(", ")
   end
 
+  def self.metrics
+    metrics = {}
+    time_bandits.each{|b| metrics.merge! b.metrics}
+    metrics
+  end
+
   def self.benchmark(title="Completed in", logger=Rails.logger)
     reset
     result = nil
@@ -48,6 +55,7 @@ module TimeBandits
     consumed # needs to be called for DB time consumer
     rc = e ? "500 Internal Server Error" : "200 OK"
     logger.info "#{title} #{sprintf("%.3f", seconds * 1000)}ms (#{runtime}) | #{rc}"
+    logger.agent[:benchmarks] = metrics.merge!(:response_code => rc) if logger.respond_to?(:agent)
     raise e if e
     result
   end

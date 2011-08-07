@@ -19,6 +19,10 @@ module TimeBandits
         def runtime
           ::MemCache.cache_runtime
         end
+
+        def metrics
+          ::MemCache.metrics
+        end
       end
     end
   end

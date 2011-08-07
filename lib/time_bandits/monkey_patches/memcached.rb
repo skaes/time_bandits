@@ -24,6 +24,14 @@ class Memcached
     sprintf "MC: %.3f(%dr,%dm)", @@cache_latency * 1000, @@cache_touches, @@cache_misses
   end
 
+  def self.metrics
+    {
+      :memcache_time => @@cache_latency * 1000,
+      :memcache_calls => @@cache_touches,
+      :memcache_misses => @@cache_misses
+    }
+  end
+
   def get_with_benchmark(key, marshal = true)
     @@cache_touches += 1
     if key.is_a?(Array)
