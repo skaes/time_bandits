@@ -36,6 +36,14 @@ module TimeBandits
         sprintf "DB: %.3f(%d,%d)", @consumed * 1000, @call_count, @query_cache_hits
       end
 
+      def metrics
+        {
+          :db_calls => @call_count,
+          :db_sql_query_cache_hits  => @query_cache_hits,
+          :db_time => @consumed * 1000
+        }
+      end
+
       private
       def all_connections
         ActiveRecord::Base.connection_handler.connection_pools.values.map{|pool| pool.connections}.flatten
