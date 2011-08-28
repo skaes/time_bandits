@@ -3,7 +3,6 @@
 #
 # the original rails stack looks like this:
 #
-# ApplicationController#process_with_unload_user
 # ActionController::SessionManagement#process_with_session_management_support
 # ActionController::Filters#process_with_filters
 # ActionController::Base#process
@@ -17,7 +16,6 @@
 #
 # with the plugin installed, the stack looks like this:
 #
-# ApplicationController#process_with_unload_user
 # ActionController::SessionManagement#process_with_session_management_support
 # ActionController::Filters#process_with_filters
 # ActionController::Base#process
@@ -31,6 +29,23 @@
 # =========================================================================================================
 
 module ActionController #:nodoc:
+
+  class Base
+    # this ugly hack is used to get the started_at and ip information into time bandits metrics
+    def request_origin
+      # this *needs* to be cached!
+      # otherwise you'd get different results if calling it more than once
+      @request_origin ||=
+        begin
+          remote_ip = request.remote_ip
+          t = Time.now
+          started_at = "#{t.to_s(:db)}.#{t.usec}"
+          request.env["time_bandits.metrics"] = {:ip => remote_ip, :started_at => started_at}
+          "#{remote_ip} at #{started_at}"
+        end
+    end
+  end
+
   module TimeBanditry #:nodoc:
     def self.included(base)
       base.class_eval do
@@ -88,10 +103,7 @@ module ActionController #:nodoc:
 
         logger.info(log_message)
         response.headers["X-Runtime"] = "#{sprintf("%.0f", seconds * 1000)}ms"
-        if logger.respond_to?(:agent)
-          logger.agent[:benchmarks] =
-            TimeBandits.metrics.merge!(:total_time => seconds * 1000, :view_time => (@view_runtime||0) * 1000)
-        end
+        merge_metrics(seconds)
       else
         perform_action_without_time_bandits
       end
@@ -118,16 +130,23 @@ module ActionController #:nodoc:
 
         logger.info(log_message)
         response.headers["X-Runtime"] = "#{sprintf("%.0f", seconds * 1000)}ms"
-        if logger.respond_to?(:agent)
-          logger.agent[:benchmarks] =
-            TimeBandits.metrics.merge!(:total_time => seconds * 1000, :view_time => (@view_runtime||0) * 1000)
-        end
+        merge_metrics(seconds)
       else
         rescue_action_without_time_bandits(exception)
       end
     end
 
     private
+
+    def merge_metrics(total_time_seconds)
+      basic_request_metrics = {
+        :total_time => total_time_seconds * 1000,
+        :view_time => (@view_runtime||0) * 1000,
+        :code => response.status.to_i,
+        :action => "#{self.class.name}\##{action_name}",
+      }
+      request.env["time_bandits.metrics"].merge!(TimeBandits.metrics).merge!(basic_request_metrics)
+    end
 
     def view_runtime
       "View: %.3f" % ((@view_runtime||0) * 1000)
