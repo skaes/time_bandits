@@ -24,6 +24,14 @@ class MemCache
     sprintf "MC: %.3f(%dr,%dm)", @@cache_latency * 1000, @@cache_touches, @@cache_misses
   end
 
+  def self.metrics
+    {
+      :memcache_time => @@cache_latency * 1000,
+      :memcache_calls => @@cache_touches,
+      :memcache_misses => @@cache_misses
+    }
+  end
+
   def get_with_benchmark(key, raw = false)
     val = nil
     @@cache_latency += Benchmark.realtime{ val=get_without_benchmark(key, raw) }

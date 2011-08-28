@@ -87,10 +87,29 @@ module TimeBandits
           GCFORMAT % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
         end
 
+        def metrics
+          {
+            :gc_time => consumed_gc_time * 1000,
+            :gc_calls => collections,
+            :heap_growth => heap_growth,
+            :heap_size => GC.heap_slots,
+            :allocated_objects => allocated_objects,
+            :allocated_bytes => allocated_size,
+            :live_data_set_size => live_data_set_size
+          }
+        end
+
       else
 
         def runtime
           "GC: %.3f(%d)" % [consumed_gc_time * 1000, collections]
+        end
+
+        def metrics
+          {
+            :gc_time => consumed_gc_time * 1000,
+            :gc_calls => collections
+          }
         end
 
       end

@@ -18,6 +18,7 @@ module TimeBandits
 
   mattr_accessor :time_bandits
   self.time_bandits = []
+
   def self.add(bandit)
     self.time_bandits << bandit unless self.time_bandits.include?(bandit)
   end
@@ -34,6 +35,12 @@ module TimeBandits
     time_bandits.map{|b| b.runtime}.join(", ")
   end
 
+  def self.metrics
+    metrics = {}
+    time_bandits.each{|b| metrics.merge! b.metrics}
+    metrics
+  end
+
   def self.benchmark(title="Completed in", logger=Rails.logger)
     reset
     result = nil
@@ -42,7 +49,7 @@ module TimeBandits
       begin
         result = yield
       rescue Exception => e
-        logger.error "Exception: #{e}"
+        logger.error "Exception: #{e}:\n#{e.backtrace[0..5].join("\n")}"
       end
     end
     consumed # needs to be called for DB time consumer
