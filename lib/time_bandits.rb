@@ -49,7 +49,7 @@ module TimeBandits
       begin
         result = yield
       rescue Exception => e
-        logger.error "Exception: #{e}"
+        logger.error "Exception: #{e}:\n#{e.backtrace[0..5].join("\n")}"
       end
     end
     consumed # needs to be called for DB time consumer
