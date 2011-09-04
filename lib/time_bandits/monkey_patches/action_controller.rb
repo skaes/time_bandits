@@ -7,7 +7,6 @@ module ActionController #:nodoc:
 
     # patch to ensure that the completed line is always written to the log
     def process_action(action, *args)
-      TimeBandits.reset
 
       raw_payload = {
         :controller => self.class.name,
@@ -72,7 +71,8 @@ module ActionController #:nodoc:
     def process_action(event)
       payload   = event.payload
       additions = ActionController::Base.log_process_action(payload)
-      Thread.current[:time_bandits_completed_info] = [event.duration, additions]
+      Thread.current[:time_bandits_completed_info] =
+        [ event.duration, additions, payload[:view_runtime], "#{payload[:controller]}##{payload[:action]}" ]
     end
   end
 

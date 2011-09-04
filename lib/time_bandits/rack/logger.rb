@@ -1,8 +1,9 @@
-require 'rails/rack/logger'
-
-module Rails
+module TimeBandits
   module Rack
-    class Logger
+    class Logger < ActiveSupport::LogSubscriber
+      def initialize(app)
+        @app = app
+      end
 
       def call(env)
         start_time = Time.now
@@ -15,6 +16,7 @@ module Rails
 
       protected
       def before_dispatch(env, start_time)
+        TimeBandits.reset
         Thread.current[:time_bandits_completed_info] = nil
 
         request = ActionDispatch::Request.new(env)
@@ -26,7 +28,7 @@ module Rails
 
       def after_dispatch(env, result, run_time)
         status = result ? result.first : 500
-        duration, additions = Thread.current[:time_bandits_completed_info]
+        duration, additions, view_time, action = Thread.current[:time_bandits_completed_info]
 
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % (run_time*1000)
         message << " (#{additions.join(' | ')})" unless additions.blank?
