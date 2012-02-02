@@ -38,9 +38,9 @@ module TimeBandits
 
       def metrics
         {
-          :db_calls => @call_count,
-          :db_sql_query_cache_hits  => @query_cache_hits,
-          :db_time => @consumed * 1000
+          :db_time => info[0] * 1000,
+          :db_calls => info[1],
+          :db_sql_query_cache_hits  => info[2]
         }
       end
 
