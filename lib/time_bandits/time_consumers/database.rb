@@ -38,7 +38,7 @@ module TimeBandits
 
       def metrics
         {
-          :db_time => info[0] * 1000,
+          :db_time => info[0],
           :db_calls => info[1],
           :db_sql_query_cache_hits  => info[2]
         }
