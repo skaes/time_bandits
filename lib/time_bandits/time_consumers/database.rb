@@ -33,12 +33,13 @@ module TimeBandits
       end
 
       def runtime
-        sprintf "ActiveRecord: %.3fms(%dq,%dh)", *info
+        time, calls, hits = *info
+        sprintf "ActiveRecord: %.3fms(%dq,%dh)", time*1000, calls, hits
       end
 
       def metrics
         {
-          :db_time => info[0],
+          :db_time => info[0]*1000,
           :db_calls => info[1],
           :db_sql_query_cache_hits  => info[2]
         }
@@ -51,7 +52,7 @@ module TimeBandits
         hits  = s.reset_query_cache_hits
         calls = s.reset_call_count
         time  = s.reset_runtime
-        [time, calls, hits]
+        [time.to_f/1000, calls, hits]
       end
     end
   end
