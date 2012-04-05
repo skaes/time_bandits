@@ -3,8 +3,8 @@
 # and the number of query cache hits
 # it needs to be adapted to each new rails version
 
-raise "AR log subscriber monkey patch for custom benchmarking is not compatible with your rails version" unless
-  (Rails::VERSION::STRING > "3.0" && Rails::VERSION::STRING < "3.1")
+raise "time_bandits ActiveRecord monkey patch is not compatible with your rails version" unless
+  Rails::VERSION::STRING =~ /^3\.[012]/
 
 require "active_record/log_subscriber"
 
@@ -46,8 +46,19 @@ module ActiveRecord
 
       return unless logger.debug?
 
-      name = '%s (%.1fms)' % [event.payload[:name], event.duration]
-      sql  = event.payload[:sql].squeeze(' ')
+      payload = event.payload
+
+      return if 'SCHEMA' == payload[:name]
+
+      name = '%s (%.1fms)' % [payload[:name], event.duration]
+      sql  = payload[:sql].squeeze(' ')
+      binds = nil
+
+      unless (payload[:binds] || []).empty?
+        binds = "  " + payload[:binds].map { |col,v|
+          [col.name, v]
+        }.inspect
+      end
 
       if odd?
         name = color(name, CYAN, true)
@@ -56,7 +67,7 @@ module ActiveRecord
         name = color(name, MAGENTA, true)
       end
 
-      debug "  #{name}  #{sql}"
+      debug "  #{name}  #{sql}#{binds}"
     end
   end
 

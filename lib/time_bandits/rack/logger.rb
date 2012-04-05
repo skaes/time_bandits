@@ -1,7 +1,8 @@
 module TimeBandits
   module Rack
     class Logger < ActiveSupport::LogSubscriber
-      def initialize(app)
+      # TODO: how to deal with tags
+      def initialize(app, tags=nil)
         @app = app
       end
 
@@ -20,10 +21,9 @@ module TimeBandits
         Thread.current[:time_bandits_completed_info] = nil
 
         request = ActionDispatch::Request.new(env)
-        path = request.fullpath
+        path = request.filtered_path
 
-        info "\n\nStarted #{request.request_method} \"#{path}\" " \
-             "for #{request.ip} at #{start_time.to_default_s}"
+        info "\n\nStarted #{request.request_method} \"#{path}\" for #{request.ip} at #{start_time.to_default_s}"
       end
 
       def after_dispatch(env, result, run_time)
@@ -33,7 +33,7 @@ module TimeBandits
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % (run_time*1000)
         message << " (#{additions.join(' | ')})" unless additions.blank?
         info message
-
+      ensure
         ActiveSupport::LogSubscriber.flush_all!
       end
 

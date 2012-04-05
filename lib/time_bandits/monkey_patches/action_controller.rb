@@ -8,15 +8,7 @@ module ActionController #:nodoc:
     # patch to ensure that the completed line is always written to the log
     def process_action(action, *args)
 
-      raw_payload = {
-        :controller => self.class.name,
-        :action     => self.action_name,
-        :params     => request.filtered_parameters,
-        :formats    => request.formats.map(&:to_sym),
-        :method     => request.method,
-        :path       => (request.fullpath rescue "unknown")
-      }
-
+      raw_payload = get_raw_payload(action)
       ActiveSupport::Notifications.instrument("start_processing.action_controller", raw_payload.dup)
 
       exception = nil
@@ -57,6 +49,34 @@ module ActionController #:nodoc:
       consumed_during_rendering = TimeBandits.consumed - consumed_before_rendering
       # TODO: time bandits all measure in seconds a.t.m.; this should be changed
       runtime - consumed_during_rendering*1000
+    end
+
+    private
+
+    if Rails::VERSION::STRING =~ /^3\.2/
+      def get_raw_payload(action)
+        {
+          :controller => self.class.name,
+          :action     => self.action_name,
+          :params     => request.filtered_parameters,
+          :formats    => request.formats.map(&:to_sym),
+          :method     => request.method,
+          :path       => (request.fullpath rescue "unknown")
+        }
+      end
+    elsif Rails::VERSION::STRING =~ /^3\.[01]/
+      def get_raw_payload(action)
+        {
+          :controller => self.class.name,
+          :action     => self.action_name,
+          :params     => request.filtered_parameters,
+          :format     => request.format.try(:ref),
+          :method     => request.method,
+          :path       => (request.fullpath rescue "unknown")
+        }
+      end
+    else
+      raise "time_bandits ActionController monkey patch is not compatible with your Rails version"
     end
 
     module ClassMethods
