@@ -18,7 +18,15 @@ module TimeBandits
         require 'time_bandits/monkey_patches/active_record'
         TimeBandits.add TimeBandits::TimeConsumers::Database
       end
+
+      # reset statistics info, so that for example the time for the first request handled
+      # by the dispatcher is correct.
+      app.config.after_initialize do
+        TimeBandits.reset
+      end
+
     end
 
   end
+
 end
