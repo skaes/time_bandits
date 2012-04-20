@@ -8,13 +8,22 @@ module TimeBandits
       end
 
       def initialize
-        GC.enable_stats
+        enable_stats
         reset
       end
       private :initialize
 
       def self.instance
         @instance ||= new
+      end
+
+      def enable_stats
+        GC.enable_stats
+        if defined?(PhusionPassenger)
+          PhusionPassenger.on_event(:starting_worker_process) do |forked|
+            GC.enable_stats if forked
+          end
+        end
       end
 
       if GC.respond_to? :heap_slots
