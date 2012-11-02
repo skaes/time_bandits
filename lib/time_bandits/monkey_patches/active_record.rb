@@ -12,19 +12,21 @@ module ActiveRecord
   class LogSubscriber
 
     def self.call_count=(value)
-      Thread.current["active_record_sql_call_count"] = value
+      Thread.current.thread_variable_set(:active_record_sql_call_count, value)
     end
 
     def self.call_count
-      Thread.current["active_record_sql_call_count"] ||= 0
+      Thread.current.thread_variable_get(:active_record_sql_call_count) ||
+        Thread.current.thread_variable_set(:active_record_sql_call_count, 0)
     end
 
     def self.query_cache_hits=(value)
-      Thread.current["active_record_sql_query_cache_hits"] = value
+      Thread.current.thread_variable_set(:active_record_sql_query_cache_hits, value)
     end
 
     def self.query_cache_hits
-      Thread.current["active_record_sql_query_cache_hits"] ||= 0
+      Thread.current.thread_variable_get(:active_record_sql_query_cache_hits) ||
+        Thread.current.thread_variable_set(:active_record_sql_query_cache_hits, 0)
     end
 
     def self.reset_call_count

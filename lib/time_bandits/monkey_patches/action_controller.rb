@@ -92,8 +92,10 @@ module ActionController #:nodoc:
     def process_action(event)
       payload   = event.payload
       additions = ActionController::Base.log_process_action(payload)
-      Thread.current[:time_bandits_completed_info] =
+      Thread.current.thread_variable_set(
+        :time_bandits_completed_info,
         [ event.duration, additions, payload[:view_runtime], "#{payload[:controller]}##{payload[:action]}" ]
+      )
     end
   end
 

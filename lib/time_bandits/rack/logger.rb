@@ -18,7 +18,7 @@ module TimeBandits
       protected
       def before_dispatch(env, start_time)
         TimeBandits.reset
-        Thread.current[:time_bandits_completed_info] = nil
+        Thread.current.thread_variable_set(:time_bandits_completed_info, nil)
 
         request = ActionDispatch::Request.new(env)
         path = request.filtered_path
@@ -28,7 +28,7 @@ module TimeBandits
 
       def after_dispatch(env, result, run_time)
         status = result ? result.first : 500
-        duration, additions, view_time, action = Thread.current[:time_bandits_completed_info]
+        duration, additions, view_time, action = Thread.current.thread_variable_get(:time_bandits_completed_info)
 
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % (run_time*1000)
         message << " (#{additions.join(' | ')})" unless additions.blank?

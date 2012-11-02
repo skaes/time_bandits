@@ -12,11 +12,12 @@ module TimeBandits
       extend self
 
       def info
-        Thread.current[:time_bandits_database_info] ||= [0.0, 0, 0]
+        Thread.current.thread_variable_get(:time_bandits_database_info) ||
+          Thread.current.thread_variable_set(:time_bandits_database_info, [0.0, 0, 0])
       end
 
       def info=(info)
-        Thread.current[:time_bandits_database_info] = info
+        Thread.current.thread_variable_set(:time_bandits_database_info, info)
       end
 
       def reset
