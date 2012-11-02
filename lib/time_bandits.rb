@@ -1,5 +1,5 @@
 require 'active_support/core_ext'
-require 'thread_local_variable_access'
+require 'thread_variables'
 
 module TimeBandits
 
