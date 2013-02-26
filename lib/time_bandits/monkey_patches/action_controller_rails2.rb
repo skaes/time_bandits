@@ -89,6 +89,9 @@ module ActionController #:nodoc:
 
         seconds = [ Benchmark::measure{ perform_action_without_time_bandits }.real, 0.0001 ].max
 
+        # need to call this to compute DB time/calls
+        TimeBandits.consumed
+
         log_message  = "Completed in #{sprintf("%.3f", seconds * 1000)}ms"
 
         log_message << " ("
@@ -115,6 +118,9 @@ module ActionController #:nodoc:
         TimeBandits.reset
 
         seconds = [ Benchmark::measure{ rescue_action_without_time_bandits(exception) }.real, 0.0001 ].max
+
+        # need to call this to compute DB time/calls
+        TimeBandits.consumed
 
         log_message  = "Completed in #{sprintf("%.3f", seconds * 1000)}ms"
 
