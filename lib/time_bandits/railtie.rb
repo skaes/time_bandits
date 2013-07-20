@@ -1,13 +1,24 @@
 module TimeBandits
 
   module Rack
-    autoload :Logger, 'time_bandits/rack/logger'
+    if Rails::VERSION::STRING >= "4.0"
+      autoload :Logger, 'time_bandits/rack/logger40'
+    else
+      autoload :Logger, 'time_bandits/rack/logger'
+    end
   end
 
   class Railtie < Rails::Railtie
 
     initializer "time_bandits" do |app|
       app.config.middleware.swap("Rails::Rack::Logger", "TimeBandits::Rack::Logger")
+
+      # rails 4 inserts Rack::Lock in development, but not in production.
+      # time bandits are not thread safe yet, so we insert the Rack::Lock middleware in production.
+      # TODO: make time_bandits thread safe
+      if Rails::VERSION::STRING >= "4.0" && Rails.env.production?
+        app.config.middleware.insert_after("Rack::Sendfile", "Rack::Lock")
+      end
 
       ActiveSupport.on_load(:action_controller) do
         require 'time_bandits/monkey_patches/action_controller'

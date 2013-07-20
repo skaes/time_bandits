@@ -5,7 +5,8 @@ module ActionController #:nodoc:
 
   module Instrumentation
 
-    # patch to ensure that the completed line is always written to the log
+    # patch to ensure that the completed line is always written to the log.
+    # this is not necessary anymore with rails 4.
     def process_action(action, *args)
 
       raw_payload = get_raw_payload
@@ -25,9 +26,9 @@ module ActionController #:nodoc:
       end
       raise exception if exception
       result
-    end
+    end unless Rails::VERSION::STRING =~ /\A4\./
 
-    # patch to ensure that render times are always recorded in the log
+    # patch to ensure that render times are always recorded in the log.
     def render(*args)
       render_output = nil
       exception = nil
@@ -53,7 +54,7 @@ module ActionController #:nodoc:
 
     private
 
-    if Rails::VERSION::STRING =~ /^3\.[01]/
+    if Rails::VERSION::STRING =~ /\A3\.[01]/
       def get_raw_payload
         {
           :controller => self.class.name,
@@ -64,7 +65,7 @@ module ActionController #:nodoc:
           :path       => (request.fullpath rescue "unknown")
         }
       end
-    elsif Rails::VERSION::STRING =~ /^3\.2/
+    elsif Rails::VERSION::STRING =~ /\A3\.2/
       def get_raw_payload
         {
           :controller => self.class.name,
@@ -75,11 +76,12 @@ module ActionController #:nodoc:
           :path       => (request.fullpath rescue "unknown")
         }
       end
-    else
+    elsif Rails::VERSION::STRING !~ /\A4\.0/
       raise "time_bandits ActionController monkey patch is not compatible with your Rails version"
     end
 
     module ClassMethods
+      # patch to log rendering time with more precision
       def log_process_action(payload) #:nodoc:
         messages, view_runtime = [], payload[:view_runtime]
         messages << ("Views: %.3fms" % view_runtime.to_f) if view_runtime
@@ -89,6 +91,8 @@ module ActionController #:nodoc:
   end
 
   class LogSubscriber
+    # the original method logs the completed line.
+    # but we do it in the middleware.
     def process_action(event)
       payload   = event.payload
       additions = ActionController::Base.log_process_action(payload)
@@ -99,6 +103,7 @@ module ActionController #:nodoc:
     end
   end
 
+  # this gets included in ActionController::Base
   module TimeBanditry #:nodoc:
     extend ActiveSupport::Concern
 
