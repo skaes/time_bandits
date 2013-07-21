@@ -17,7 +17,7 @@ module TimeBandits
       # time bandits are not thread safe yet, so we insert the Rack::Lock middleware in production.
       # TODO: make time_bandits thread safe
       if Rails::VERSION::STRING >= "4.0" && Rails.env.production?
-        app.config.middleware.insert_after("Rack::Sendfile", "Rack::Lock")
+        app.config.middleware.insert_before("TimeBandits::Rack::Logger", "Rack::Lock")
       end
 
       ActiveSupport.on_load(:action_controller) do
