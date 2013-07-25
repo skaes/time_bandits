@@ -16,6 +16,7 @@ module TimeBandits
   end
 
   require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
+  require 'time_bandits/time_consumers/base_consumer'
 
   mattr_accessor :time_bandits
   self.time_bandits = []
