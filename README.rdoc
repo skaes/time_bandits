@@ -60,28 +60,26 @@ It's pretty easy to write additional time consumers; please refer to the source 
 
 == Prerequisites
 
-Rails 3.x is required. The plugin will raise an error if you try to use it with a
-different version.
+Rails >= 3.x is required. The gem will raise an error if you try to use it with an incompatible
+version.
 
-You'll need a ruby with the railsexpress GC patches applied, if you want to include GC and
-heap size information in the completed line. This is very useful, especially if you want
-to analyze your rails logs using logjam (see http://github.com/alpinegizmo/logjam/).
+You'll need a ruby with the railsexpress GC patches applied, if you want to include GC and heap size
+information in the completed line. This is very useful, especially if you want to analyze your rails
+logs using logjam (see http://github.com/skaes/logjam/).
 
-Ruby Enterprise Edition contains a subset of the railsexpress patches. To get the full
-monty, you can use for example rvm and the railsexpress rvm patchsets (see
-https://github.com/skaes/rvm-patchsets).
+Ruby only contains a subset of the railsexpress patches. To get the full monty, you can use for example
+rvm and the railsexpress rvm patchsets (see https://github.com/skaes/rvm-patchsets).
 
 
 == History
 
-This plugin started from the code of the 'custom_benchmark' plugin written by
-tylerkovacs. However, we changed so much of the code that is is practically a full
-rewrite, hence we changed the name.
+This plugin started from the code of the 'custom_benchmark' plugin written by tylerkovacs. However, we
+changed so much of the code that is is practically a full rewrite, hence we changed the name.
 
 
 == License
 
-Copyright (c) 2009, 2011 Stefan Kaes <skaes@railsexpress.de>
+Copyright (c) 2009-2012 Stefan Kaes <skaes@railsexpress.de>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
