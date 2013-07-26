@@ -2,27 +2,31 @@ module TimeBandits::TimeConsumers
   class BaseConsumer
     class << self
       def instance
-        Thread.current.thread_variable_get(self.class.name) ||
-          Thread.current.thread_variable_set(self.class.name, new)
+        Thread.current.thread_variable_get(name) ||
+          Thread.current.thread_variable_set(name, new)
+      end
+
+      def prefix(sym)
+        @metrics_prefix = sym
       end
 
       # first symbol is used as time measurement
       def fields(*symbols)
-        @struct = Struct.new(*symbols)
+        @struct = Struct.new(*(symbols.map{|s| "#{@metrics_prefix}_#{s}".to_sym}))
         symbols.each do |name|
           class_eval(<<-"EVA", __FILE__, __LINE__ + 1)
-            def #{name}; @counters.#{name}; end
-            def #{name}=(v); @counters.#{name} = v; end
+            def #{name}; @counters.#{@metrics_prefix}_#{name}; end
+            def #{name}=(v); @counters.#{@metrics_prefix}_#{name} = v; end
           EVA
         end
       end
 
       def format(f, *keys)
         @runtime_format = f
-        @runtime_keys = keys
+        @runtime_keys = keys.map{|s| "#{@metrics_prefix}_#{s}".to_sym}
       end
 
-      attr_reader :struct, :timer_name, :runtime_format, :runtime_keys
+      attr_reader :metrics_prefix, :struct, :timer_name, :runtime_format, :runtime_keys
 
       def method_missing(m, *args)
         (i = instance).respond_to?(m) ? i.send(m,*args) : super

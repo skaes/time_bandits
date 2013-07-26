@@ -5,26 +5,19 @@ require 'thread_variables/access'
 
 class ActiveSupportNotificationsTest < Test::Unit::TestCase
   class SimpleConsumer < TimeBandits::TimeConsumers::BaseConsumer
-    fields :simple_time, :simple_calls
-    format "Simple: %.1fms(%d calls)", :simple_time, :simple_calls
-
-    def add_stats(time, calls)
-      self.simple_time += time
-      self.simple_calls += calls
-    end
+    prefix :simple
+    fields :time, :calls
+    format "Simple: %.1fms(%d calls)", :time, :calls
 
     class Subscriber < ActiveSupport::LogSubscriber
-      # need a logger, otherwise work will never be called
-      def logger
-        @logger ||= Logger.new(STDOUT)
-      end
       def work(event)
-        SimpleConsumer.instance.add_stats(event.duration, 1)
+        i = SimpleConsumer.instance
+        i.time += event.duration
+        i.calls += 1
       end
     end
     Subscriber.attach_to :simple
   end
-
 
   def setup
     TimeBandits.time_bandits = []
