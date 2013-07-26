@@ -48,8 +48,7 @@ module ActionController #:nodoc:
       consumed_before_rendering = TimeBandits.consumed
       runtime = yield
       consumed_during_rendering = TimeBandits.consumed - consumed_before_rendering
-      # TODO: time bandits all measure in seconds a.t.m.; this should be changed
-      runtime - consumed_during_rendering*1000
+      runtime - consumed_during_rendering
     end
 
     private

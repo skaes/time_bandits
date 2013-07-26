@@ -77,7 +77,7 @@ module TimeBandits
         status = resp ? resp.first.to_i : 500
         completed_info = Thread.current.thread_variable_get(:time_bandits_completed_info)
         additions = completed_info[1] if completed_info
-        message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % (run_time*1000)
+        message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % run_time
         message << " (#{additions.join(' | ')})" unless additions.blank?
         logger.info message
       end

@@ -33,7 +33,7 @@ module TimeBandits
         hits  = s.reset_query_cache_hits
         calls = s.reset_call_count
         time  = s.reset_runtime
-        [time.to_f/1000, calls, hits]
+        [time, calls, hits]
       end
     end
   end

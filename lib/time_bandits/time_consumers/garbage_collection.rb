@@ -49,8 +49,8 @@ module TimeBandits
         0.0
       end
 
-      def consumed_gc_time
-        (GC.time - @consumed).to_f / 1_000_000
+      def consumed_gc_time # ms
+        (GC.time - @consumed).to_f / 1000
       end
 
       def collections
@@ -89,12 +89,12 @@ module TimeBandits
           allocated_objects = self.allocated_objects
           allocated_size = self.allocated_size
           GCHacks.heap_dump if heap_growth > 0 && @@heap_dumps_enabled && defined?(GCHacks)
-          GCFORMAT % [consumed_gc_time * 1000, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
+          GCFORMAT % [consumed_gc_time, collections, heap_growth, heap_slots, allocated_objects, allocated_size, live_data_set_size]
         end
 
         def metrics
           {
-            :gc_time => consumed_gc_time * 1000,
+            :gc_time => consumed_gc_time,
             :gc_calls => collections,
             :heap_growth => heap_growth,
             :heap_size => GC.heap_slots,
@@ -107,12 +107,12 @@ module TimeBandits
       else
 
         def runtime
-          "GC: %.3f(%d)" % [consumed_gc_time * 1000, collections]
+          "GC: %.3f(%d)" % [consumed_gc_time, collections]
         end
 
         def metrics
           {
-            :gc_time => consumed_gc_time * 1000,
+            :gc_time => consumed_gc_time,
             :gc_calls => collections
           }
         end
