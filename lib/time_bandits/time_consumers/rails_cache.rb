@@ -30,6 +30,7 @@ module TimeBandits::TimeConsumers
         instance.time += event.duration
         instance.calls += 1
 
+        return unless logger.debug?
         debug 'RailsCache %s: %s (%.3fms)' % [method, event.payload[:key].inspect, event.duration]
       end
     end
