@@ -55,7 +55,9 @@ With these two new time consumers, the log line changes to
 
 Sidenote for Germans: you can use the word "Gesabbel" (eng: drivel) as a mnemonic here ;-)
 
-It's pretty easy to write additional time consumers; please refer to the source code.
+It's realtively straightforward to write additional time consumers; the more difficult part of this is
+monkey patching the code which you want to instrument. Have a look at consumers under
+lib/time_bandits/time_consumers and the corresponding patches under lib/time_bandits/monkey_patches.
 
 
 == Prerequisites
@@ -76,6 +78,15 @@ rvm and the railsexpress rvm patchsets (see https://github.com/skaes/rvm-patchse
 This plugin started from the code of the 'custom_benchmark' plugin written by tylerkovacs. However, we
 changed so much of the code that is is practically a full rewrite, hence we changed the name.
 
+== Release Notes
+
+version 0.5:
+   - has dropped rails 2 support
+   - relies on ActiveSupport::Notifications
+   - is suposedly thread safe
+   - all measurements are thread local (except GC statistics)
+   - times are all measured in milliseconds internally
+   - added class TimeBandits::TimeConsumers::BaseConsumer to simplify writing custom consumers
 
 == License
 
