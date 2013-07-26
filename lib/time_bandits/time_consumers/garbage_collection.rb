@@ -81,11 +81,7 @@ module TimeBandits
           end
         end
 
-        if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
-          GCFORMAT = "GC: %.3f(%d) | HP: %d(%d,%d,%d,%d)"
-        else
-          GCFORMAT= "GC: %.3f(%d), HP: %d(%d,%d,%d,%d)"
-        end
+        GCFORMAT = "GC: %.3f(%d) | HP: %d(%d,%d,%d,%d)"
 
         def runtime
           heap_slots = GC.heap_slots

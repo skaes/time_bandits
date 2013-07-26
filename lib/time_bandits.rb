@@ -35,7 +35,7 @@ module TimeBandits
   end
 
   def self.runtime
-    time_bandits.map{|b| b.runtime}.join(", ")
+    time_bandits.map{|b| b.runtime}.join("| ")
   end
 
   def self.metrics
