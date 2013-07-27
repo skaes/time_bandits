@@ -8,7 +8,6 @@ module ActionController #:nodoc:
     # patch to ensure that the completed line is always written to the log.
     # this is not necessary anymore with rails 4.
     def process_action(action, *args)
-
       raw_payload = get_raw_payload
       ActiveSupport::Notifications.instrument("start_processing.action_controller", raw_payload.dup)
 
@@ -91,14 +90,29 @@ module ActionController #:nodoc:
 
   class LogSubscriber
     # the original method logs the completed line.
-    # but we do it in the middleware.
+    # but we do it in the middleware, unless we're in test mode. don't ask.
     def process_action(event)
       payload   = event.payload
       additions = ActionController::Base.log_process_action(payload)
+
       Thread.current.thread_variable_set(
         :time_bandits_completed_info,
         [ event.duration, additions, payload[:view_runtime], "#{payload[:controller]}##{payload[:action]}" ]
       )
+
+      # this an ugly hack to encure completed lines show up in the test logs
+      # TODO: move this code to some other place
+      return unless Rails.env.test? && Rails::VERSION::STRING >= "3.2"
+
+      status = payload[:status]
+      if status.nil? && payload[:exception].present?
+        exception_class_name = payload[:exception].first
+        status = ActionDispatch::ExceptionWrapper.status_code_for_exception(exception_class_name)
+      end
+      message = "Completed #{status} #{Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % event.duration
+      message << " (#{additions.join(" | ")})" unless additions.blank?
+
+      info(message)
     end
   end
 
