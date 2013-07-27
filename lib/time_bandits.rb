@@ -13,7 +13,7 @@ module TimeBandits
     autoload :JMX,               'time_bandits/time_consumers/jmx'
     autoload :MemCache,          'time_bandits/time_consumers/mem_cache'
     autoload :Memcached,         'time_bandits/time_consumers/memcached'
-    autoload :RailsCache,        'time_bandits/time_consumers/rails_cache'
+    autoload :Dalli,             'time_bandits/time_consumers/dalli'
   end
 
   require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
