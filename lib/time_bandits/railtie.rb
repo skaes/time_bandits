@@ -16,6 +16,18 @@ module TimeBandits
       ActiveSupport.on_load(:action_controller) do
         require 'time_bandits/monkey_patches/action_controller'
         include ActionController::TimeBanditry
+
+        # make sure TimeBandits.reset is called in test environment as middlewares are not executed
+        if Rails.env.test?
+          require 'action_controller/test_case'
+          module ActionController::TestCase::Behavior
+            def process_with_time_bandits(*args)
+              TimeBandits.reset
+              process_without_time_bandits(*args)
+            end
+            alias_method_chain :process, :time_bandits
+          end
+        end
       end
 
       ActiveSupport.on_load(:active_record) do
