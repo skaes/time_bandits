@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/skaes/time_bandits/"
   s.summary     = "Custom performance logging for Rails"
   s.description = "Rails Completed Line on Steroids"
+  s.license     = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
