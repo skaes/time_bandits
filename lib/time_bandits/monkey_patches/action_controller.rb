@@ -124,11 +124,7 @@ module ActionController #:nodoc:
       def log_process_action(payload) #:nodoc:
         # need to call this to compute DB time/calls
         TimeBandits.consumed
-        messages = super
-        TimeBandits.time_bandits.each do |bandit|
-          messages << bandit.runtime
-        end
-        messages
+        super.concat(TimeBandits.runtimes)
       end
     end
 

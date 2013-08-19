@@ -51,7 +51,12 @@ module TimeBandits::TimeConsumers
     end
 
     def runtime
-      self.class.runtime_format % metrics.values_at(*self.class.runtime_keys)
+      values = metrics.values_at(*self.class.runtime_keys)
+      if values.all?{|v|v==0}
+        ""
+      else
+        self.class.runtime_format % values
+      end
     end
   end
 end

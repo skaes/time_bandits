@@ -34,8 +34,12 @@ module TimeBandits
     time_bandits.map{|b| b.consumed}.sum
   end
 
+  def self.runtimes
+    time_bandits.map{|b| b.runtime}.reject{|t| t.blank?}
+  end
+
   def self.runtime
-    time_bandits.map{|b| b.runtime}.join("| ")
+    runtimes.join(" | ")
   end
 
   def self.metrics
