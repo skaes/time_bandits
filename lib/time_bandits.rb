@@ -14,6 +14,7 @@ module TimeBandits
     autoload :MemCache,          'time_bandits/time_consumers/mem_cache'
     autoload :Memcached,         'time_bandits/time_consumers/memcached'
     autoload :Dalli,             'time_bandits/time_consumers/dalli'
+    autoload :Redis,             'time_bandits/time_consumers/redis'
   end
 
   require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"

@@ -1,12 +1,12 @@
 require_relative '../test_helper'
 
-class MemcachedTest < Test::Unit::TestCase
+class DalliTest < Test::Unit::TestCase
   def setup
     TimeBandits.time_bandits = []
-    TimeBandits.add TimeBandits::TimeConsumers::Memcached
+    TimeBandits.add TimeBandits::TimeConsumers::Dalli
     TimeBandits.reset
-    @cache = Memcached.new
-    @bandit = TimeBandits::TimeConsumers::Memcached.instance
+    @cache = Rails.cache
+    @bandit = TimeBandits::TimeConsumers::Dalli.instance
   end
 
   test "getting metrics" do
@@ -22,7 +22,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   test "formatting" do
     @bandit.calls = 3
-    assert_equal "MC: 0.000(0r,0m,0w,3c)", TimeBandits.runtime
+    assert_equal "Dalli: 0.000(0r,0m,0w,3c)", TimeBandits.runtime
   end
 
   test "foreground work gets accounted for" do
@@ -45,9 +45,10 @@ class MemcachedTest < Test::Unit::TestCase
 
   private
   def work
+    TimeBandits.reset
     2.times do
-      @cache.get("foo")
-      @cache.set("bar", 1)
+      @cache.read("foo")
+      @cache.write("bar", 1)
     end
   end
   def check_work

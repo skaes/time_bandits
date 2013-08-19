@@ -23,6 +23,7 @@ class ActiveSupportNotificationsTest < Test::Unit::TestCase
     TimeBandits.time_bandits = []
     TimeBandits.add SimpleConsumer
     TimeBandits.reset
+    @bandit = SimpleConsumer.instance
   end
 
   test "getting metrics" do
@@ -30,7 +31,8 @@ class ActiveSupportNotificationsTest < Test::Unit::TestCase
   end
 
   test "formatting" do
-    assert_equal "Simple: 0.0ms(0 calls)", TimeBandits.runtime
+    @bandit.calls = 1
+    assert_equal "Simple: 0.0ms(1 calls)", TimeBandits.runtime
   end
 
   test "foreground work gets accounted for in milliseconds" do
