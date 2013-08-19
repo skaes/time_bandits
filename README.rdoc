@@ -78,7 +78,19 @@ rvm and the railsexpress rvm patchsets (see https://github.com/skaes/rvm-patchse
 This plugin started from the code of the 'custom_benchmark' plugin written by tylerkovacs. However, we
 changed so much of the code that is is practically a full rewrite, hence we changed the name.
 
+== Running Tests
+
+In order for the test to run you need a running memcached and redis-server
+
 == Release Notes
+
+version 0.5.2
+   - added redis time consumer
+   - fixed rails 4.0 problems with builtin mem_cache_store
+   - now only consumers which measured something are added to the completed line
+
+version 0.5.1
+   - added license file
 
 version 0.5:
    - has dropped rails 2 support
