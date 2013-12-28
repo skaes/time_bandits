@@ -27,7 +27,8 @@ class GCConsumerTest < Test::Unit::TestCase
     # "GC: 0.000(0) | HP: 0(116101,6,0,69442)"
     gc, heap = TimeBandits.runtime.split(' | ')
     assert_equal "GC: 0.000(0)", gc
-    assert_match heap, /HP: \d+\(\d+,\d+,\d+,\d+\)/
+    match = /\AHP: \d+\(\d+,\d+,\d+,\d+\)/
+    assert(heap =~ match, "#{heap} does not match #{match}")
   end
 
   test "collecting GC stats" do

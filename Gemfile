@@ -6,5 +6,4 @@ gemspec
 # gem "activesupport", "3.2.13"
 gem "activesupport", "4.0.0"
 
-gem "debugger"
-gem "memcached"
+gem "byebug"

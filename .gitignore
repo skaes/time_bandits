@@ -5,3 +5,4 @@ pkg/*
 .bundle
 .DS_Store
 .rvmrc
+dump.rdb

@@ -18,6 +18,7 @@ module TimeBandits
       end
 
       def enable_stats
+        return unless GC.respond_to? :enable_stats
         GC.enable_stats
         if defined?(PhusionPassenger)
           PhusionPassenger.on_event(:starting_worker_process) do |forked|
@@ -26,13 +27,37 @@ module TimeBandits
         end
       end
 
+      if GC.respond_to?(:collections)
+        def _get_collections; GC.collections; end
+      elsif GC.respond_to?(:count)
+        def _get_collections; GC.count; end
+      else
+        def _get_collections; 0; end
+      end
+
+      if ObjectSpace.respond_to?(:allocated_objects)
+        def _get_allocated_objects; ObjectSpace.allocated_objects; end
+      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.1.0"
+        def _get_allocated_objects; GC.stat(:total_allocated_object); end
+      else
+        def _get_allocated_objects; 0; end
+      end
+
+      if GC.respond_to?(:allocated_size)
+        def _get_allocated_size; GC.allocated_size; end
+      elsif GC.respond_to?(:total_malloced_bytes)
+        def _get_allocated_size; GC.total_malloced_bytes; end
+      else
+        def _get_allocated_size; 0; end
+      end
+
       if GC.respond_to? :heap_slots
 
         def reset
           @consumed = GC.time
-          @collections = GC.collections
-          @allocated_objects = ObjectSpace.allocated_objects
-          @allocated_size = GC.allocated_size
+          @collections = _get_collections
+          @allocated_objects = _get_allocated_objects
+          @allocated_size = _get_allocated_size
           @heap_slots = GC.heap_slots
         end
 
@@ -40,7 +65,7 @@ module TimeBandits
 
         def reset
           @consumed = GC.time
-          @collections = GC.collections
+          @collections = _get_collections
         end
 
       end
@@ -54,17 +79,17 @@ module TimeBandits
       end
 
       def collections
-        GC.collections - @collections
+        _get_collections - @collections
       end
 
       if GC.respond_to? :heap_slots
 
         def allocated_objects
-          ObjectSpace.allocated_objects - @allocated_objects
+          _get_allocated_objects - @allocated_objects
         end
 
         def allocated_size
-          GC.allocated_size - @allocated_size
+          _get_allocated_size - @allocated_size
         end
 
         def heap_growth
@@ -72,13 +97,9 @@ module TimeBandits
         end
 
         if GC.respond_to? :heap_slots_live_after_last_gc
-          def live_data_set_size
-            GC.heap_slots_live_after_last_gc
-          end
+          def live_data_set_size; GC.heap_slots_live_after_last_gc; end
         else
-          def live_data_set_size
-            0
-          end
+          def live_data_set_size; 0; end
         end
 
         GCFORMAT = "GC: %.3f(%d) | HP: %d(%d,%d,%d,%d)"

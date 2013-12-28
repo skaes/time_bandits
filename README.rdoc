@@ -84,7 +84,11 @@ In order for the test to run you need a running memcached and redis-server
 
 == Release Notes
 
-version 0.5.2
+version 0.6.1
+   - switched to byebug (debugger does not full support 2.0 and 2.1 not at all)
+   - adapted garbage collection statistics to work for 2.1
+
+version 0.6.0
    - added redis time consumer
    - fixed rails 4.0 problems with builtin mem_cache_store
    - now only consumers which measured something are added to the completed line
