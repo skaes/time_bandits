@@ -44,7 +44,7 @@ module ActiveRecord
 
     def render_bind(column, value)
       if column
-        if column.binary?
+        if column.type == :binary
           value = "<#{value.bytesize} bytes of binary data>"
         end
 
