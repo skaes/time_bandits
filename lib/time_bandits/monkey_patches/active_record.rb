@@ -4,12 +4,13 @@
 # it needs to be adapted to each new rails version
 
 raise "time_bandits ActiveRecord monkey patch is not compatible with your rails version" unless
-  Rails::VERSION::STRING =~ /^3\.[012]/
+  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[0])/
 
 require "active_record/log_subscriber"
 
 module ActiveRecord
   class LogSubscriber
+    IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"] unless defined?(IGNORE_PAYLOAD_NAMES)
 
     def self.call_count=(value)
       Thread.current.thread_variable_set(:active_record_sql_call_count, value)
@@ -41,6 +42,18 @@ module ActiveRecord
       hits
     end
 
+    def render_bind(column, value)
+      if column
+        if column.binary?
+          value = "<#{value.bytesize} bytes of binary data>"
+        end
+
+        [column.name, value]
+      else
+        [nil, value]
+      end
+    end unless instance_methods.include?(:render_bind)
+
     def sql(event)
       self.class.runtime += event.duration
       self.class.call_count += 1
@@ -50,7 +63,7 @@ module ActiveRecord
 
       payload = event.payload
 
-      return if 'SCHEMA' == payload[:name]
+      return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
 
       name = '%s (%.1fms)' % [payload[:name], event.duration]
       sql  = payload[:sql].squeeze(' ')
@@ -58,7 +71,7 @@ module ActiveRecord
 
       unless (payload[:binds] || []).empty?
         binds = "  " + payload[:binds].map { |col,v|
-          [col.name, v]
+          render_bind(col, v)
         }.inspect
       end
 
