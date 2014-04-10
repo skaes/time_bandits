@@ -74,7 +74,7 @@ module ActionController #:nodoc:
           :path       => (request.fullpath rescue "unknown")
         }
       end
-    elsif Rails::VERSION::STRING !~ /\A4\.0/
+    elsif Rails::VERSION::STRING !~ /\A4\.[01]/
       raise "time_bandits ActionController monkey patch is not compatible with your Rails version"
     end
 
