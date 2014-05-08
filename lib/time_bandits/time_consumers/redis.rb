@@ -16,7 +16,7 @@ module TimeBandits
         def request(event)
           i = Redis.instance
           i.time += event.duration
-          i.calls += event.payload[:commands].size
+          i.calls += 1 #count redis round trips, not calls
 
           return unless logger.debug?
 

@@ -37,7 +37,28 @@ class RedisTest < Test::Unit::TestCase
     assert_equal 0, m[:redis_time]
   end
 
+  test "counts pipelined calls as single call" do
+    pipelined_work
+    m = TimeBandits.metrics
+    assert_equal 1, m[:redis_calls]
+  end
+
+  test "counts multi calls as single call" do
+    pipelined_work(:multi)
+    m = TimeBandits.metrics
+    assert_equal 1, m[:redis_calls]
+  end
+
   private
+  def pipelined_work(type = :pipelined)
+    TimeBandits.reset
+    @redis.send(type) do
+      @redis.get("foo")
+      @redis.set("bar", 1)
+      @redis.hgetall("baz")
+    end
+  end
+
   def work
     TimeBandits.reset
     2.times do
