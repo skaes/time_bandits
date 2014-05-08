@@ -42,18 +42,29 @@ module ActiveRecord
       hits
     end
 
-    def render_bind(column, value)
-      if column
-        if column.type == :binary
-          value = "<#{value.bytesize} bytes of binary data>"
+    # Rails 4.1 uses method_added to automatically subscribe newly
+    # added methods. Since :render_bind and :sql are already defined,
+    # the net effect is that sql gets called twice. Therefore, we
+    # temporarily switch to protected mode and change it back later to
+    # public.
+
+    unless instance_methods.include?(:render_bind)
+      protected
+      def render_bind(column, value)
+        if column
+          if column.type == :binary
+            value = "<#{value.bytesize} bytes of binary data>"
+          end
+          [column.name, value]
+        else
+          [nil, value]
         end
-
-        [column.name, value]
-      else
-        [nil, value]
       end
-    end unless instance_methods.include?(:render_bind)
+      public :render_bind
+      public
+    end
 
+    protected
     def sql(event)
       self.class.runtime += event.duration
       self.class.call_count += 1
@@ -85,6 +96,8 @@ module ActiveRecord
       debug "  #{name}  #{sql}#{binds}"
     end
   end
+  public :sql
+  public
 
   module Railties
     module ControllerRuntime
@@ -99,4 +112,3 @@ module ActiveRecord
     end
   end
 end
-
