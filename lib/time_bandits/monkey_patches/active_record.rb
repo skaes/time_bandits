@@ -95,9 +95,9 @@ module ActiveRecord
 
       debug "  #{name}  #{sql}#{binds}"
     end
+    public :sql
+    public
   end
-  public :sql
-  public
 
   module Railties
     module ControllerRuntime
