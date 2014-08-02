@@ -84,9 +84,11 @@ In order for the test to run you need a running memcached and redis-server
 
 == Release Notes
 
-version 0.6.1
-   - switched to byebug (debugger does not full support 2.0 and 2.1 not at all)
+version 0.7.0
+   - switched to byebug (debugger does not fully support 2.0 and 2.1 not at all)
    - adapted garbage collection statistics to work for 2.1
+   - improved rails 4.x compatibility
+   - GC time consumer now tries to make the most out of an unpatched ruby
 
 version 0.6.0
    - added redis time consumer
@@ -99,14 +101,14 @@ version 0.5.1
 version 0.5:
    - has dropped rails 2 support
    - relies on ActiveSupport::Notifications
-   - is suposedly thread safe
+   - is supposedly thread safe
    - all measurements are thread local (except GC statistics)
    - times are all measured in milliseconds internally
    - added class TimeBandits::TimeConsumers::BaseConsumer to simplify writing custom consumers
 
 == License
 
-Copyright (c) 2009-2012 Stefan Kaes <skaes@railsexpress.de>
+Copyright (c) 2009-2014 Stefan Kaes <skaes@railsexpress.de>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

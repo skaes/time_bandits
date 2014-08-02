@@ -47,12 +47,22 @@ class GCConsumerTest < Test::Unit::TestCase
   def check_work
     GC.start
     m = TimeBandits.metrics
-    assert 0 <  m[:gc_calls]
-    assert 0 <  m[:gc_time]
-    assert 0 <= m[:heap_growth]
-    assert 0 <  m[:heap_size]
-    assert 0 <  m[:allocated_objects]
-    assert 0 <  m[:allocated_bytes]
-    assert 0 <= m[:live_data_set_size]
+    if GC.respond_to?(:time)
+      assert 0 <  m[:gc_calls]
+      assert 0 <  m[:gc_time]
+      assert 0 <= m[:heap_growth]
+      assert 0 <  m[:heap_size]
+      assert 0 <  m[:allocated_objects]
+      assert 0 <  m[:allocated_bytes]
+      assert 0 <= m[:live_data_set_size]
+    else
+      assert 0 <  m[:gc_calls]
+      assert 0 <= m[:gc_time]
+      assert 0 <= m[:heap_growth]
+      assert 0 <  m[:heap_size]
+      assert 0 <  m[:allocated_objects]
+      assert 0 <= m[:allocated_bytes]
+      assert 0 <  m[:live_data_set_size]
+    end
   end
 end
