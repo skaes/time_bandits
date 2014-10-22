@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency("dalli")
   s.add_development_dependency("redis")
   s.add_development_dependency("memcached")
+  s.add_development_dependency("sequel")
+  s.add_development_dependency("mysql2")
   s.add_development_dependency("minitest", '~> 4.7.5')
 end
 
