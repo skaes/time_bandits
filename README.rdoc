@@ -84,6 +84,9 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 == Release Notes
 
+version 0.7.1
+  - support measuring sequel gem
+
 version 0.7.0
    - switched to byebug (debugger does not fully support 2.0 and 2.1 not at all)
    - adapted garbage collection statistics to work for 2.1
