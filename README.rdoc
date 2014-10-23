@@ -80,7 +80,7 @@ changed so much of the code that is is practically a full rewrite, hence we chan
 
 == Running Tests
 
-In order for the test to run you need a running memcached and redis-server
+In order for the test to run you need a running memcached, redis-server and mysql
 
 == Release Notes
 

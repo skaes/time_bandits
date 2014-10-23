@@ -15,6 +15,7 @@ module TimeBandits
     autoload :Memcached,         'time_bandits/time_consumers/memcached'
     autoload :Dalli,             'time_bandits/time_consumers/dalli'
     autoload :Redis,             'time_bandits/time_consumers/redis'
+    autoload :Sequel,            'time_bandits/time_consumers/sequel'
   end
 
   require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
@@ -44,8 +45,12 @@ module TimeBandits
   end
 
   def self.metrics
-    metrics = {}
-    time_bandits.each{|b| metrics.merge! b.metrics}
+    metrics = Hash.new(0)
+    time_bandits.each do |bandit|
+      bandit.metrics.each do |k,v|
+        metrics[k] += v
+      end
+    end
     metrics
   end
 
