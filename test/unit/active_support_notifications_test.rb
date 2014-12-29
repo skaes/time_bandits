@@ -31,6 +31,7 @@ class ActiveSupportNotificationsTest < Test::Unit::TestCase
   end
 
   test "formatting" do
+    assert_same @bandit, TimeBandits.time_bandits.first.instance
     @bandit.calls = 1
     assert_equal "Simple: 0.0ms(1 calls)", TimeBandits.runtime
   end

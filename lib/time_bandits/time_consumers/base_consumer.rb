@@ -2,8 +2,12 @@ module TimeBandits::TimeConsumers
   class BaseConsumer
     class << self
       def instance
-        Thread.current.thread_variable_get(name) ||
-          Thread.current.thread_variable_set(name, new)
+        Thread.current.thread_variable_get(key) ||
+          Thread.current.thread_variable_set(key, new)
+      end
+
+      def key
+        @key ||= name.to_sym
       end
 
       def prefix(sym)

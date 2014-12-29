@@ -48,21 +48,21 @@ class GCConsumerTest < Test::Unit::TestCase
     GC.start
     m = TimeBandits.metrics
     if GC.respond_to?(:time)
-      assert 0 <  m[:gc_calls]
-      assert 0 <  m[:gc_time]
-      assert 0 <= m[:heap_growth]
-      assert 0 <  m[:heap_size]
-      assert 0 <  m[:allocated_objects]
-      assert 0 <  m[:allocated_bytes]
-      assert 0 <= m[:live_data_set_size]
+      assert_operator 0, :<,  m[:gc_calls]
+      assert_operator 0, :<,  m[:gc_time]
+      assert_instance_of Fixnum, m[:heap_growth]
+      assert_operator 0, :<,  m[:heap_size]
+      assert_operator 0, :<,  m[:allocated_objects]
+      assert_operator 0, :<,  m[:allocated_bytes]
+      assert_operator 0, :<=, m[:live_data_set_size]
     else
-      assert 0 <  m[:gc_calls]
-      assert 0 <= m[:gc_time]
-      assert 0 <= m[:heap_growth]
-      assert 0 <  m[:heap_size]
-      assert 0 <  m[:allocated_objects]
-      assert 0 <= m[:allocated_bytes]
-      assert 0 <  m[:live_data_set_size]
+      assert_operator 0, :<,  m[:gc_calls]
+      assert_operator 0, :<=, m[:gc_time]
+      assert_instance_of Fixnum, m[:heap_growth]
+      assert_operator 0, :<,  m[:heap_size]
+      assert_operator 0, :<,  m[:allocated_objects]
+      assert_operator 0, :<=, m[:allocated_bytes]
+      assert_operator 0, :<,  m[:live_data_set_size]
     end
   end
 end

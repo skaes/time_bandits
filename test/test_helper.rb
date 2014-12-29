@@ -1,14 +1,24 @@
-require 'test/unit'
+require 'minitest'
 require 'mocha/setup'
-require 'active_support/testing/declarative'
-
 require 'minitest/pride'
+require 'minitest/autorun'
 
-class Test::Unit::TestCase
-  extend ActiveSupport::Testing::Declarative
+require 'active_support/testing/declarative'
+module Test
+  module Unit
+    class TestCase < Minitest::Test
+      extend ActiveSupport::Testing::Declarative
+      def assert_nothing_raised(*)
+        yield
+      end
+    end
+  end
 end
 
+Minitest::Test.i_suck_and_my_tests_are_order_dependent!
+
 require_relative '../lib/time_bandits'
+require "byebug"
 
 ActiveSupport::LogSubscriber.class_eval do
   # need a logger, otherwise no data will be collected
@@ -21,7 +31,7 @@ end
 module Rails
   extend self
   module VERSION
-    STRING = "4.0.0"
+    STRING = "4.1.8"
   end
   def cache
     @cache ||= ActiveSupport::Cache.lookup_store(:mem_cache_store)
