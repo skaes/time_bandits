@@ -4,7 +4,7 @@
 # it needs to be adapted to each new rails version
 
 raise "time_bandits ActiveRecord monkey patch is not compatible with your rails version" unless
-  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[01])/
+  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[012])/
 
 require "active_record/log_subscriber"
 

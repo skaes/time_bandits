@@ -1,7 +1,6 @@
-require 'action_controller/metal/instrumentation'
-require 'action_controller/log_subscriber'
-
 module ActionController #:nodoc:
+
+  require 'action_controller/metal/instrumentation'
 
   module Instrumentation
 
@@ -74,7 +73,7 @@ module ActionController #:nodoc:
           :path       => (request.fullpath rescue "unknown")
         }
       end
-    elsif Rails::VERSION::STRING !~ /\A4\.[01]/
+    elsif Rails::VERSION::STRING !~ /\A4\.[012]/
       raise "time_bandits ActionController monkey patch is not compatible with your Rails version"
     end
 
@@ -87,6 +86,8 @@ module ActionController #:nodoc:
       end
     end
   end
+
+  require 'action_controller/log_subscriber'
 
   class LogSubscriber
     # the original method logs the completed line.
