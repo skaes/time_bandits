@@ -8,7 +8,7 @@ module TimeBandits::TimeConsumers
     fields :time, :calls, :misses, :reads, :writes
     format "Dalli: %.3f(%dr,%dm,%dw,%dc)", :time, :reads, :misses, :writes, :calls
 
-    if Rails::VERSION::STRING >= "4.0" && Rails.cache.class.respond_to?(:instrument=)
+    if Rails::VERSION::STRING >= "4.0" && Rails::VERSION::STRING < "4.2" && Rails.cache.class.respond_to?(:instrument=)
       # Rails 4 mem_cache_store (which uses dalli internally), unlike dalli_store, is not instrumented by default
       def reset
         Rails.cache.class.instrument = true
