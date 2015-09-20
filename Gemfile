@@ -4,6 +4,7 @@ source "http://rubygems.org"
 gemspec
 
 # gem "activesupport", "3.2.13"
-gem "activesupport", "4.1.8"
+# gem "activesupport", "4.1.8"
+gem "activesupport", "4.2.4"
 
 gem "byebug"

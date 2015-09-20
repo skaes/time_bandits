@@ -31,7 +31,7 @@ end
 module Rails
   extend self
   module VERSION
-    STRING = "4.1.8"
+    STRING = ActiveSupport::VERSION::STRING
   end
   def cache
     @cache ||= ActiveSupport::Cache.lookup_store(:mem_cache_store)
