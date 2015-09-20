@@ -15,8 +15,6 @@ module Test
   end
 end
 
-Minitest::Test.i_suck_and_my_tests_are_order_dependent!
-
 require_relative '../lib/time_bandits'
 require "byebug"
 

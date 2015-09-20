@@ -20,14 +20,17 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency("thread_variables")
   s.add_runtime_dependency("activesupport", [">= 2.3.2"])
-  s.add_development_dependency("rake")
-  s.add_development_dependency("mocha")
+
   s.add_development_dependency("ansi")
+  s.add_development_dependency("appraisal")
+  s.add_development_dependency("byebug")
   s.add_development_dependency("dalli")
-  s.add_development_dependency("redis")
   s.add_development_dependency("memcached")
-  s.add_development_dependency("sequel")
-  s.add_development_dependency("mysql2")
   s.add_development_dependency("minitest", "~> 5.5")
+  s.add_development_dependency("mocha")
+  s.add_development_dependency("mysql2")
+  s.add_development_dependency("rake")
+  s.add_development_dependency("redis")
+  s.add_development_dependency("sequel")
 end
 

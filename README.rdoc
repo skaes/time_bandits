@@ -84,6 +84,9 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 == Release Notes
 
+master
+  - use appraisal for testing against multiple rails versions
+
 version 0.7.1
   - support measuring sequel gem
 

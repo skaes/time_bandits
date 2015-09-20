@@ -1,0 +1,60 @@
+PATH
+  remote: ../
+  specs:
+    time_bandits (0.7.3)
+      activesupport (>= 2.3.2)
+      thread_variables
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activesupport (4.1.13)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
+    ansi (1.5.0)
+    appraisal (2.1.0)
+      bundler
+      rake
+      thor (>= 0.14.0)
+    byebug (6.0.2)
+    dalli (2.7.4)
+    i18n (0.7.0)
+    json (1.8.3)
+    memcached (1.8.0)
+    metaclass (0.0.4)
+    minitest (5.8.0)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
+    mysql2 (0.4.1)
+    rake (10.4.2)
+    redis (3.2.1)
+    sequel (4.26.0)
+    thor (0.19.1)
+    thread_safe (0.3.5)
+    thread_variables (0.2.0)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activesupport (= 4.1.13)
+  ansi
+  appraisal
+  byebug
+  dalli
+  memcached
+  minitest (~> 5.5)
+  mocha
+  mysql2
+  rake
+  redis
+  sequel
+  time_bandits!
+
+BUNDLED WITH
+   1.10.6
