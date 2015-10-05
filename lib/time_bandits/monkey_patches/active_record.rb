@@ -102,9 +102,19 @@ module ActiveRecord
   module Railties
     module ControllerRuntime
       def cleanup_view_runtime
+        # this method has been redefined to do nothing for activerecord on purpose
         super
       end
+
+      def append_info_to_payload(payload)
+        super
+        if ActiveRecord::Base.connected?
+          payload[:db_runtime] = TimeBandits::TimeConsumers::Database.instance.consumed
+        end
+      end
+
       module ClassMethods
+        # this method has been redefined to do nothing for activerecord on purpose
         def log_process_action(payload)
           super
         end
