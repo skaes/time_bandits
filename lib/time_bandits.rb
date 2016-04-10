@@ -37,6 +37,11 @@ module TimeBandits
     time_bandits.map{|b| b.consumed}.sum
   end
 
+  def self.current_runtime(except = [])
+    except = Array(except)
+    time_bandits.map{|b| except.include?(b) ? 0 : b.current_runtime}.sum
+  end
+
   def self.runtimes
     time_bandits.map{|b| b.runtime}.reject{|t| t.blank?}
   end

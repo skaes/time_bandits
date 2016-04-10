@@ -26,6 +26,10 @@ module TimeBandits
         i.time += time
       end
 
+      def current_runtime
+        Database.instance.time + ActiveRecord::LogSubscriber.runtime
+      end
+
       private
 
       def reset_stats

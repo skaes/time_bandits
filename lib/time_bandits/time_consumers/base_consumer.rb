@@ -54,6 +54,8 @@ module TimeBandits::TimeConsumers
       @counters[0]
     end
 
+    alias_method :current_runtime, :consumed
+
     def runtime
       values = metrics.values_at(*self.class.runtime_keys)
       if values.all?{|v|v==0}

@@ -26,6 +26,7 @@ class NoTimeBanditsTest < Test::Unit::TestCase
   def test_clean_state
     assert_equal Hash.new, TimeBandits.metrics
     assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
     assert_equal "", TimeBandits.runtime
   end
 end
@@ -33,9 +34,10 @@ end
 class DummyConsumerTest < Test::Unit::TestCase
   module DummyConsumer
     extend self
-    def consumed; 0; end
+    def consumed; 1; end
+    def current_runtime; 1; end
     def runtime; "Dummy: 0ms"; end
-    def metrics; {:dummy_time => 0, :dummy_calls => 0}; end
+    def metrics; {:dummy_time => 1, :dummy_calls => 1}; end
     def reset; end
   end
 
@@ -57,7 +59,19 @@ class DummyConsumerTest < Test::Unit::TestCase
     assert_nothing_raised { TimeBandits.reset }
   end
 
+  test "consumed" do
+    assert_equal 1, TimeBandits.consumed
+  end
+
+  test "current_runtime" do
+    assert_equal 1, TimeBandits.current_runtime
+  end
+
+  test "current_runtime without DummyConsumer" do
+    assert_equal 0, TimeBandits.current_runtime(DummyConsumer)
+  end
+
   test "getting metrics" do
-    assert_equal({:dummy_time => 0, :dummy_calls => 0}, TimeBandits.metrics)
+    assert_equal({:dummy_time => 1, :dummy_calls => 1}, TimeBandits.metrics)
   end
 end
