@@ -18,6 +18,8 @@ class DalliTest < Test::Unit::TestCase
       :memcache_writes => 0
     }
     assert_equal nothing_measured, TimeBandits.metrics
+    assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
   end
 
   test "formatting" do

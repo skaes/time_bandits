@@ -14,6 +14,8 @@ class SequelTest < Test::Unit::TestCase
       :db_calls => 0
     }
     assert_equal nothing_measured, metrics
+    assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
   end
 
   test "formatting" do

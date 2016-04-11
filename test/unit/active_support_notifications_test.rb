@@ -28,6 +28,8 @@ class ActiveSupportNotificationsTest < Test::Unit::TestCase
 
   test "getting metrics" do
     assert_equal({:simple_calls => 0, :simple_time => 0}, TimeBandits.metrics)
+    assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
   end
 
   test "formatting" do

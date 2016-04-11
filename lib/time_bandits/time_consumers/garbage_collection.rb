@@ -90,6 +90,7 @@ module TimeBandits
       def consumed
         0.0
       end
+      alias_method :current_runtime, :consumed
 
       def consumed_gc_time # ms
         (_get_gc_time - @consumed).to_f / 1000

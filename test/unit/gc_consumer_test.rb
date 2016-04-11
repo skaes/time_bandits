@@ -20,6 +20,8 @@ class GCConsumerTest < Test::Unit::TestCase
     }
     m = TimeBandits.metrics
     assert_equal sample.keys.sort, m.keys.sort
+    assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
   end
 
   test "formatting" do

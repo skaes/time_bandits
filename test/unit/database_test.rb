@@ -16,6 +16,8 @@ class DatabaseTest < Test::Unit::TestCase
       :db_sql_query_cache_hits => 0
     }
     assert_equal nothing_measured, TimeBandits.metrics
+    assert_equal 0, TimeBandits.consumed
+    assert_equal 0, TimeBandits.current_runtime
   end
 
   test "formatting" do
