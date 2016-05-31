@@ -17,6 +17,7 @@ module TimeBandits
     autoload :Dalli,             'time_bandits/time_consumers/dalli'
     autoload :Redis,             'time_bandits/time_consumers/redis'
     autoload :Sequel,            'time_bandits/time_consumers/sequel'
+    autoload :Beetle,            'time_bandits/time_consumers/beetle'
   end
 
   require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"

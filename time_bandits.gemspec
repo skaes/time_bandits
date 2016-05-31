@@ -33,5 +33,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency("redis")
   s.add_development_dependency("sequel")
   s.add_development_dependency("activerecord")
+  s.add_development_dependency("beetle", ">= 0.4.6")
 end
 
