@@ -28,7 +28,18 @@ module TimeBandits
 
           cmds.each do |cmd, *args|
             if args.present?
-              output << " [ #{cmd.to_s.upcase} #{args.join(" ")} ]"
+              logged_args = args.map do |a|
+                case
+                when a.respond_to?(:inspect) then a.inspect
+                when a.respond_to?(:to_s)    then a.to_s
+                else
+                  # handle poorly-behaved descendants of BasicObject
+                  klass = a.instance_exec { (class << self; self end).superclass }
+                  "\#<#{klass}:#{a.__id__}>"
+                end
+              end
+
+              output << " [ #{cmd.to_s.upcase} #{logged_args.join(" ")} ]"
             else
               output << " [ #{cmd.to_s.upcase} ]"
             end
