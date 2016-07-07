@@ -6,14 +6,32 @@ if major < 4 || (major == 4 && minor < 15)
 end
 
 Sequel::Database.class_eval do
-  alias :_orig_log_yield :log_yield
+  if instance_methods.include?(:log_connection_yield)
 
-  def log_yield(*args)
-    begin
-      start = Time.now
-      _orig_log_yield(args) { yield if block_given? }
-    ensure
-      ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: Time.now - start)
+    alias :_orig_log_connection_yield :log_connection_yield
+
+    def log_connection_yield(*args, &block)
+      begin
+        start = Time.now
+        _orig_log_connection_yield(*args, &block)
+      ensure
+        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: Time.now - start)
+      end
     end
+
+  else
+
+    alias :_orig_log_yield :log_yield
+
+    def log_yield(*args, &block)
+      begin
+        start = Time.now
+        _orig_log_yield(*args, &block)
+      ensure
+        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: Time.now - start)
+      end
+    end
+
   end
+
 end
