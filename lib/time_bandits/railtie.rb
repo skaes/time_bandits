@@ -19,14 +19,14 @@ module TimeBandits
 
         # make sure TimeBandits.reset is called in test environment as middlewares are not executed
         if Rails.env.test?
-          require 'action_controller/test_case'
-          module ActionController::TestCase::Behavior
-            def process_with_time_bandits(*args)
+          module TestWithTimeBanditsReset
+            def process(*args)
               TimeBandits.reset
-              process_without_time_bandits(*args)
+              super
             end
-            alias_method_chain :process, :time_bandits
           end
+          require 'action_controller/test_case'
+          ActionController::TestCase::Behavior.prepend TestWithTimeBanditsReset
         end
       end
 
