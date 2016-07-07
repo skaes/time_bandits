@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.5
+    ports:
+      - "3601:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
+  memcached:
+    container_name: memcached
+    image: memcached:1.4.27
+    ports:
+      - "11211:11211"
+
+  redis:
+    container_name: redis
+    image: redis:3.2.0
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.6.2
+    ports:
+      - "5672:5672"
