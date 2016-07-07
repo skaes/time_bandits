@@ -1,4 +1,4 @@
-if Rails::VERSION::STRING >= "4.0"
+if Rails::VERSION::STRING =~ /\A4.[0123]/
   require "time_bandits/monkey_patches/active_support_cache_store"
 end
 

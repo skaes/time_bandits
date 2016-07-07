@@ -1,6 +1,9 @@
 require "active_support/cache"
 
-# rails 4 builtin mem_cache_store broke hit reporting for fetch
+# Rails 4 builtin mem_cache_store broke hit reporting for fetch.
+# This has been fixed in Rails 5.
+# The dalli time consumer makes sure to require this file only for Rails 4.
+
 class ActiveSupport::Cache::Store
   private
   # only called by fetch
