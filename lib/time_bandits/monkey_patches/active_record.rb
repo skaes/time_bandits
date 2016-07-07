@@ -4,7 +4,7 @@
 # it needs to be adapted to each new rails version
 
 raise "time_bandits ActiveRecord monkey patch is not compatible with your rails version" unless
-  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[012])/
+  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[012])|5.0/
 
 require "active_record/log_subscriber"
 
@@ -48,6 +48,8 @@ module ActiveRecord
     # temporarily switch to protected mode and change it back later to
     # public.
 
+    # Note that render_bind was added for Rails 4.0, and the implementation
+    # has changed since then, so we are careful to only redefine it if necessary.
     unless instance_methods.include?(:render_bind)
       protected
       def render_bind(column, value)
@@ -76,28 +78,50 @@ module ActiveRecord
 
       return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
 
-      name = '%s (%.1fms)' % [payload[:name], event.duration]
-      sql  = payload[:sql].squeeze(' ')
-      binds = nil
-
-      unless (payload[:binds] || []).empty?
-        binds = "  " + payload[:binds].map { |col,v|
-          render_bind(col, v)
-        }.inspect
-      end
-
-      if odd?
-        name = color(name, CYAN, true)
-        sql  = color(sql, nil, true)
-      else
-        name = color(name, MAGENTA, true)
-      end
-
-      debug "  #{name}  #{sql}#{binds}"
+      log_sql_statement(payload, event)
     end
     public :sql
     public
+
+    private
+    if Rails::VERSION::STRING < "5.0"
+      def log_sql_statement(payload, event)
+        name = '%s (%.1fms)' % [payload[:name], event.duration]
+        sql  = payload[:sql].squeeze(' ')
+        binds = nil
+
+        unless (payload[:binds] || []).empty?
+          binds = "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
+        end
+
+        name = colorize_payload_name(name, payload[:name])
+        sql  = color(sql, sql_color(sql), true)
+
+        debug "  #{name}  #{sql}#{binds}"
+      end
+    else
+      def log_sql_statement(payload, event)
+        name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
+        sql   = payload[:sql]
+        binds = nil
+
+        unless (payload[:binds] || []).empty?
+          binds = "  " + payload[:binds].map { |col,v| render_bind(col, v) }.inspect
+        end
+
+        if odd?
+          name = color(name, CYAN, true)
+          sql  = color(sql, nil, true)
+        else
+          name = color(name, MAGENTA, true)
+        end
+
+        debug "  #{name}  #{sql}#{binds}"
+      end
+    end
   end
+
+  require "active_record/railties/controller_runtime"
 
   module Railties
     module ControllerRuntime
