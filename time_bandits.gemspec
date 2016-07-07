@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("minitest", "~> 5.5")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mysql2")
-  s.add_development_dependency("rake")
+  s.add_development_dependency("rake", "~> 10.5.0")
   s.add_development_dependency("redis")
   s.add_development_dependency("sequel")
   s.add_development_dependency("activerecord")
