@@ -26,7 +26,7 @@ module TimeBandits
             end
           end
           require 'action_controller/test_case'
-          ActionController::TestCase::Behavior.prepend TestWithTimeBanditsReset
+          ActionController::TestCase.prepend TestWithTimeBanditsReset
         end
       end
 

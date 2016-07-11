@@ -84,6 +84,9 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 == Release Notes
 
+version 0.10.1
+  -- fixed incorrect module prepend which broke controller testing
+
 version 0.10.0
   -- support rails 5
 
