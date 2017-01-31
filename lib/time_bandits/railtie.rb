@@ -15,11 +15,19 @@ module TimeBandits
 
       ActiveSupport.on_load(:action_controller) do
         require 'time_bandits/monkey_patches/action_controller'
+
+        # Rails 5 may trigger the on_load event several times.
+        next if included_modules.include?(ActionController::TimeBanditry)
+        # For some magic reason, the test above is always false, but I'll leave it in
+        # here, should rails every decide to change this behavior.
+
         include ActionController::TimeBanditry
 
         # make sure TimeBandits.reset is called in test environment as middlewares are not executed
         if Rails.env.test?
           require 'action_controller/test_case'
+          # Rails 5 fires on_load events multiple times, so we need to protect against endless recursion here
+          next if ActionController::TestCase::Behavior.instance_methods.include?(:process_without_time_bandits)
           module ActionController::TestCase::Behavior
             def process_with_time_bandits(*args)
               TimeBandits.reset
@@ -33,6 +41,7 @@ module TimeBandits
 
       ActiveSupport.on_load(:active_record) do
         require 'time_bandits/monkey_patches/active_record'
+        # TimeBandits.add is idempotent, so no need to protect against on_load fired multiple times.
         TimeBandits.add TimeBandits::TimeConsumers::Database
       end
 
