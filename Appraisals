@@ -1,7 +1,8 @@
 [
-  "4.1.15",
-  "4.2.6",
-  "5.0.0",
+  "4.1.16",
+  "4.2.8",
+  "5.0.3",
+  "5.1.1",
 ].each do |rails_version|
   appraise "activesupport-#{rails_version}" do
     gem "activesupport", rails_version
