@@ -84,6 +84,16 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 == Release Notes
 
+
+version 0.10.6:
+  -- fixed time calculation for rails 4
+
+version 0.10.5
+  -- enabled activerecord monkeypatch for rails 5.1
+
+version 0.10.4
+  --  protect against Rails 5 firing on_load handlers multiple times
+
 version 0.10.3
   -- fixed activerecord monkeypatch
 
