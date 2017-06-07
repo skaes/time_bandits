@@ -36,7 +36,7 @@ module TimeBandits
         finish(request)
         raise
       ensure
-        completed(request, Time.now - start_time, resp)
+        completed(request, (Time.now - start_time) * 1000, resp)
         ActiveSupport::LogSubscriber.flush_all!
       end
 
