@@ -17,9 +17,9 @@ end
 
 namespace :appraisal do
   task :install do
-    system "appraisal install"
+    abort unless system("appraisal install")
   end
   task :test => :install do
-    system("appraisal rake test")
+    abort unless system("appraisal rake test")
   end
 end
