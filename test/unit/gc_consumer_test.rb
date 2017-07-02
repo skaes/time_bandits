@@ -49,10 +49,11 @@ class GCConsumerTest < Test::Unit::TestCase
   def check_work
     GC.start
     m = TimeBandits.metrics
+    number_class = RUBY_VERSION >= "2.4.0" ? Integer : Fixnum
     if GC.respond_to?(:time)
       assert_operator 0, :<,  m[:gc_calls]
       assert_operator 0, :<,  m[:gc_time]
-      assert_instance_of Fixnum, m[:heap_growth]
+      assert_instance_of number_class, m[:heap_growth]
       assert_operator 0, :<,  m[:heap_size]
       assert_operator 0, :<,  m[:allocated_objects]
       assert_operator 0, :<,  m[:allocated_bytes]
@@ -60,7 +61,7 @@ class GCConsumerTest < Test::Unit::TestCase
     else
       assert_operator 0, :<,  m[:gc_calls]
       assert_operator 0, :<=, m[:gc_time]
-      assert_instance_of Fixnum, m[:heap_growth]
+      assert_instance_of number_class, m[:heap_growth]
       assert_operator 0, :<,  m[:heap_size]
       assert_operator 0, :<,  m[:allocated_objects]
       assert_operator 0, :<=, m[:allocated_bytes]
