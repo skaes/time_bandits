@@ -8,14 +8,14 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (4.2.8)
-      activesupport (= 4.2.8)
+    activemodel (4.2.9)
+      activesupport (= 4.2.9)
       builder (~> 3.1)
-    activerecord (4.2.8)
-      activemodel (= 4.2.8)
-      activesupport (= 4.2.8)
+    activerecord (4.2.9)
+      activemodel (= 4.2.9)
+      activesupport (= 4.2.9)
       arel (~> 6.0)
-    activesupport (4.2.8)
+    activesupport (4.2.9)
       i18n (~> 0.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
@@ -54,10 +54,10 @@ GEM
     minitest (5.10.2)
     mocha (1.2.1)
       metaclass (~> 0.0.1)
-    mysql2 (0.4.6)
+    mysql2 (0.4.7)
     rake (10.5.0)
     redis (3.3.3)
-    sequel (4.47.0)
+    sequel (4.48.0)
     thor (0.19.4)
     thread_safe (0.3.6)
     thread_variables (0.2.0)
@@ -69,8 +69,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (= 4.2.8)
-  activesupport (= 4.2.8)
+  activerecord (= 4.2.9)
+  activesupport (= 4.2.9)
   ansi
   appraisal
   beetle (>= 0.4.6)
