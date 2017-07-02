@@ -8,4 +8,4 @@ sudo: false
 services:
   - redis-server
   - memcached
-
+  - rabbitmq
