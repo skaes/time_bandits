@@ -84,7 +84,25 @@ module ActiveRecord
     public
 
     private
-    if Rails::VERSION::STRING >= "5.0"
+    if Rails::VERSION::STRING >= "5.1"
+      def log_sql_statement(payload, event)
+        name = '%s (%.1fms)' % [payload[:name], event.duration]
+        sql  = payload[:sql].squeeze(' ')
+        binds = nil
+
+        unless (payload[:binds] || []).empty?
+          casted_params = type_casted_binds(payload[:binds], payload[:type_casted_binds])
+          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
+            render_bind(attr, value)
+          }.inspect
+        end
+
+        name = colorize_payload_name(name, payload[:name])
+        sql  = color(sql, sql_color(sql), true)
+
+        debug "  #{name}  #{sql}#{binds}"
+      end
+    elsif Rails::VERSION::STRING >= "5.0"
       def log_sql_statement(payload, event)
         name = '%s (%.1fms)' % [payload[:name], event.duration]
         sql  = payload[:sql].squeeze(' ')
