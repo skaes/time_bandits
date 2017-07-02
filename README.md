@@ -84,7 +84,10 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 ## Release Notes
 
-### Version 0.10.6:
+### Version 0.10.7
+  - fixed bug in activerecord monkeypatch for Rails 5.1
+
+### Version 0.10.6
   - fixed time calculation for rails 4
 
 ### Version 0.10.5
@@ -147,7 +150,7 @@ In order for the test to run you need a running memcached, redis-server and mysq
 ### Version 0.5.1
    - added license file
 
-### Version 0.5:
+### Version 0.5
    - has dropped rails 2 support
    - relies on ActiveSupport::Notifications
    - is supposedly thread safe
