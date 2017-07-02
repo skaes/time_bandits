@@ -1,10 +1,10 @@
-= Time Bandits
+# Time Bandits
 
-== About
+## About
 
 Time Bandits is a gem plugin for Rails which enhances Rails' controller/view/db benchmark logging.
 
-== Usage
+## Usage
 
 Without configuration, the standard Rails 'Completed line' will change
 from its default format
@@ -60,7 +60,7 @@ monkey patching the code which you want to instrument. Have a look at consumers 
 lib/time_bandits/time_consumers and the corresponding patches under lib/time_bandits/monkey_patches.
 
 
-== Prerequisites
+## Prerequisites
 
 Rails >= 3.x is required. The gem will raise an error if you try to use it with an incompatible
 version.
@@ -73,82 +73,81 @@ Ruby only contains a subset of the railsexpress patches. To get the full monty, 
 rvm and the railsexpress rvm patchsets (see https://github.com/skaes/rvm-patchsets).
 
 
-== History
+## History
 
 This plugin started from the code of the 'custom_benchmark' plugin written by tylerkovacs. However, we
 changed so much of the code that is is practically a full rewrite, hence we changed the name.
 
-== Running Tests
+## Running Tests
 
 In order for the test to run you need a running memcached, redis-server and mysql
 
-== Release Notes
+## Release Notes
 
+### Version 0.10.6:
+  - fixed time calculation for rails 4
 
-version 0.10.6:
-  -- fixed time calculation for rails 4
+### Version 0.10.5
+  - enabled activerecord monkeypatch for rails 5.1
 
-version 0.10.5
-  -- enabled activerecord monkeypatch for rails 5.1
+### Version 0.10.4
+  -  protect against Rails 5 firing on_load handlers multiple times
 
-version 0.10.4
-  --  protect against Rails 5 firing on_load handlers multiple times
+### Version 0.10.3
+  - fixed activerecord monkeypatch
 
-version 0.10.3
-  -- fixed activerecord monkeypatch
+### Version 0.10.2
+  - controller testing fixed for rspec
 
-version 0.10.2
-  -- controller testing fixed for rspec
+### Version 0.10.1
+  - fixed incorrect module prepend which broke controller testing
 
-version 0.10.1
-  -- fixed incorrect module prepend which broke controller testing
+### Version 0.10.0
+  - support rails 5
 
-version 0.10.0
-  -- support rails 5
+### Version 0.9.2
+  - sequel gem changes broke sequel time consumer
 
-version 0.9.2
-  -- sequel gem changes broke sequel time consumer
+### Version 0.9.1
+  - make sure redis times consumer logs keys in ASCII
 
-version 0.9.1
-  -- make sure redis times consumer logs keys in ASCII
+### Version 0.9.0
+  - added beetle time consumer
 
-version 0.9.0
-  -- added beetle time consumer
-
-version 0.8.1
+### Version 0.8.1
   - bugfix
 
-version 0.8.0
+### Version 0.8.0
   - support retrieving current runtime including not yet consumed time
 
-version 0.7.4
+### Version 0.7.4
   - use appraisal for testing against multiple rails versions
   - bugfix for actions without render
 
-version 0.7.3
+### Version 0.7.3
   - bugfix dalli consumer for rails 4.2
 
-version 0.7.2
+### Version 0.7.2
   - support ruby 2.2.0
 
-version 0.7.1
+### Version 0.7.1
   - support measuring sequel gem
 
-version 0.7.0
+### Version 0.7.0
    - switched to byebug (debugger does not fully support 2.0 and 2.1 not at all)
    - adapted garbage collection statistics to work for 2.1
    - improved rails 4.x compatibility
    - GC time consumer now tries to make the most out of an unpatched ruby
 
-version 0.6.0
+### Version 0.6.0
    - added redis time consumer
    - fixed rails 4.0 problems with builtin mem_cache_store
    - now only consumers which measured something are added to the completed line
 
-version 0.5.1
+### Version 0.5.1
    - added license file
 
-version 0.5:
+### Version 0.5:
    - has dropped rails 2 support
    - relies on ActiveSupport::Notifications
    - is supposedly thread safe
@@ -156,7 +155,7 @@ version 0.5:
    - times are all measured in milliseconds internally
    - added class TimeBandits::TimeConsumers::BaseConsumer to simplify writing custom consumers
 
-== License
+## License
 
 Copyright (c) 2009-2014 Stefan Kaes <skaes@railsexpress.de>
 
