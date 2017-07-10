@@ -84,7 +84,7 @@ module ActiveRecord
     public
 
     private
-    if Rails::VERSION::STRING >= "5.1"
+    if Rails::VERSION::STRING >= "5.0.3"
       def log_sql_statement(payload, event)
         name = '%s (%.1fms)' % [payload[:name], event.duration]
         sql  = payload[:sql].squeeze(' ')
