@@ -1,9 +1,9 @@
 language: ruby
 rvm:
-  - 2.2.5
-  - 2.3.4
-  - 2.4.1
-script: "rake appraisal:test"
+  - 2.3.6
+  - 2.4.3
+  - 2.5.0
+script: "bundle exec rake appraisal:test"
 sudo: false
 services:
   - redis-server
