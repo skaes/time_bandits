@@ -4,12 +4,16 @@ require 'time_bandits/monkey_patches/active_record'
 
 class DatabaseTest < Test::Unit::TestCase
 
-  ActiveRecord::Base.logger = Logger.new($stdout)
-
   def setup
     TimeBandits.time_bandits = []
     TimeBandits.add TimeBandits::TimeConsumers::Database
     TimeBandits.reset
+    @old_logger = ActiveRecord::Base.logger
+    ActiveRecord::Base.logger = Logger.new($stdout)
+  end
+
+  def teardown
+    ActiveRecord::Base.logger = @old_logger
   end
 
   test "getting metrics" do

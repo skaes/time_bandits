@@ -34,4 +34,7 @@ module Rails
   def cache
     @cache ||= ActiveSupport::Cache.lookup_store(:mem_cache_store)
   end
+  def env
+    "test"
+  end
 end

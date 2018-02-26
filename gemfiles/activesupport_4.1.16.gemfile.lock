@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    time_bandits (0.10.7)
+    time_bandits (0.10.10)
       activesupport (>= 2.3.2)
       thread_variables
 
@@ -88,4 +88,4 @@ DEPENDENCIES
   time_bandits!
 
 BUNDLED WITH
-   1.15.1
+   1.16.1
