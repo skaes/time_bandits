@@ -70,7 +70,7 @@ module ActiveRecord
     def sql(event)
       self.class.runtime += event.duration
       self.class.call_count += 1
-      self.class.query_cache_hits += 1 if event.payload[:name] == "CACHE"
+      self.class.query_cache_hits += 1 if payload[:cached] || event.payload[:name] == "CACHE"
 
       return unless logger.debug?
 
@@ -84,7 +84,26 @@ module ActiveRecord
     public
 
     private
-    if Rails::VERSION::STRING >= "5.0.3"
+    if Rails::VERSION::STRING >= "5.1.5"
+      def log_sql_statement(payload, event)
+        name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
+        name  = "CACHE #{name}" if payload[:cached]
+        sql   = payload[:sql]
+        binds = nil
+
+        unless (payload[:binds] || []).empty?
+          casted_params = type_casted_binds(payload[:type_casted_binds])
+          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
+            render_bind(attr, value)
+          }.inspect
+        end
+
+        name = colorize_payload_name(name, payload[:name])
+        sql  = color(sql, sql_color(sql), true)
+
+        debug "  #{name}  #{sql}#{binds}"
+      end
+    elsif Rails::VERSION::STRING >= "5.0.3"
       def log_sql_statement(payload, event)
         name = '%s (%.1fms)' % [payload[:name], event.duration]
         sql  = payload[:sql].squeeze(' ')
