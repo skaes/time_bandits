@@ -3,6 +3,9 @@ require 'active_record'
 require 'time_bandits/monkey_patches/active_record'
 
 class DatabaseTest < Test::Unit::TestCase
+
+  ActiveRecord::Base.logger = Logger.new($stdout)
+
   def setup
     TimeBandits.time_bandits = []
     TimeBandits.add TimeBandits::TimeConsumers::Database
@@ -35,6 +38,14 @@ class DatabaseTest < Test::Unit::TestCase
     log_subscriber.runtime += 4.0
     assert_equal 5.234, bandit.current_runtime
     assert_equal "ActiveRecord: 1.234ms(0q,0h)", TimeBandits.runtime
+  end
+
+  test "sql can be executed" do
+    event = mock('event')
+    event.stubs(:payload).returns({name: "MURKS", sql: "SELECT 1"})
+    event.stubs(:duration).returns(0.1)
+    ActiveRecord::Base.logger.expects(:debug)
+    assert_nil log_subscriber.new.sql(event)
   end
 
   private

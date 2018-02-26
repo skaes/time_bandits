@@ -68,13 +68,13 @@ module ActiveRecord
 
     protected
     def sql(event)
+      payload = event.payload
+
       self.class.runtime += event.duration
       self.class.call_count += 1
-      self.class.query_cache_hits += 1 if payload[:cached] || event.payload[:name] == "CACHE"
+      self.class.query_cache_hits += 1 if payload[:cached] || payload[:name] == "CACHE"
 
       return unless logger.debug?
-
-      payload = event.payload
 
       return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
 
