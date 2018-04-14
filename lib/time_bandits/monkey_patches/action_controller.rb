@@ -118,7 +118,7 @@ module ActionController #:nodoc:
     end
   end
 
-  # this gets included in ActionController::Base
+  # this gets included in ActionController::Base in the time_bandits railtie
   module TimeBanditry #:nodoc:
     extend ActiveSupport::Concern
 
