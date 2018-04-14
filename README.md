@@ -84,6 +84,18 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 ## Release Notes
 
+## Version 0.10.11
+  - support rails 5.2.0
+
+## Version 0.10.10
+  - fixed regression introduced in 0.10.9
+
+### Version 0.10.9
+  - added specialized activerecord logging for Rails >= 5.1.5
+
+### Version 0.10.8
+  - rails has changed render_bind in 5.0.3
+
 ### Version 0.10.7
   - fixed bug in activerecord monkeypatch for Rails 5.1
 
