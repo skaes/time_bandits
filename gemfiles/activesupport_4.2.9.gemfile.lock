@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    time_bandits (0.10.10)
+    time_bandits (0.10.12)
       activesupport (>= 2.3.2)
       thread_variables
 
