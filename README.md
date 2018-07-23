@@ -84,6 +84,9 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 ## Release Notes
 
+## Version 0.10.12
+  - supports rails 5.0.7
+
 ## Version 0.10.11
   - support rails 5.2.0
 
