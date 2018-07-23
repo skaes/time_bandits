@@ -103,7 +103,7 @@ module ActiveRecord
 
         debug "  #{name}  #{sql}#{binds}"
       end
-    elsif Rails::VERSION::STRING == "5.0.7"
+    elsif Rails::VERSION::STRING >= "5.0.7" && Rails::VERSION::STRING < "5.1.0"
       def log_sql_statement(payload, event)
         name = '%s (%.1fms)' % [payload[:name], event.duration]
         sql  = payload[:sql].squeeze(' ')
