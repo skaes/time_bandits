@@ -8,17 +8,17 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (5.0.4)
-      activesupport (= 5.0.4)
-    activerecord (5.0.4)
-      activemodel (= 5.0.4)
-      activesupport (= 5.0.4)
-      arel (~> 7.0)
-    activesupport (5.0.4)
+    activemodel (6.0.0)
+      activesupport (= 6.0.0)
+    activerecord (6.0.0)
+      activemodel (= 6.0.0)
+      activesupport (= 6.0.0)
+    activesupport (6.0.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (~> 0.7)
+      i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.1, >= 2.1.8)
     amq-protocol (2.3.0)
     amqp (1.8.0)
       amq-protocol (>= 2.2.0)
@@ -28,7 +28,6 @@ GEM
       bundler
       rake
       thor (>= 0.14.0)
-    arel (7.1.4)
     beetle (3.3.1)
       activesupport (>= 2.3.4)
       amq-protocol (= 2.3.0)
@@ -42,7 +41,7 @@ GEM
     dalli (2.7.10)
     eventmachine (1.2.7)
     hiredis (0.6.3)
-    i18n (0.9.5)
+    i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     memcached (1.8.0)
     metaclass (0.0.4)
@@ -58,13 +57,14 @@ GEM
     thread_variables (0.2.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    zeitwerk (2.1.9)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (= 5.0.4)
-  activesupport (= 5.0.4)
+  activerecord (= 6.0.0)
+  activesupport (= 6.0.0)
   ansi
   appraisal
   beetle (>= 0.4.6)
