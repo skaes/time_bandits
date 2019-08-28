@@ -3,7 +3,7 @@ rvm:
   - 2.4.5
   - 2.5.5
   - 2.6.3
-script: "bundle exec rake appraisal:test"
+script: "bundle exec rake"
 gemfile:
   - gemfiles/activesupport_4.2.8.gemfile
   - gemfiles/activesupport_4.2.9.gemfile
