@@ -1,3 +1,3 @@
 module TimeBandits
-  VERSION = "0.10.12"
+  VERSION = "0.11.0"
 end
