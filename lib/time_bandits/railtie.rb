@@ -1,11 +1,7 @@
 module TimeBandits
 
   module Rack
-    if Rails::VERSION::STRING >= "4.0"
-      autoload :Logger, 'time_bandits/rack/logger40'
-    else
-      autoload :Logger, 'time_bandits/rack/logger'
-    end
+    autoload :Logger, 'time_bandits/rack/logger'
   end
 
   class Railtie < Rails::Railtie

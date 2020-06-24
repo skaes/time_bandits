@@ -1,20 +1,8 @@
-if Rails::VERSION::STRING =~ /\A4.[0123]/
-  require "time_bandits/monkey_patches/active_support_cache_store"
-end
-
 module TimeBandits::TimeConsumers
   class Dalli < BaseConsumer
     prefix :memcache
     fields :time, :calls, :misses, :reads, :writes
     format "Dalli: %.3f(%dr,%dm,%dw,%dc)", :time, :reads, :misses, :writes, :calls
-
-    if Rails::VERSION::STRING >= "4.0" && Rails::VERSION::STRING < "4.2" && Rails.cache.class.respond_to?(:instrument=)
-      # Rails 4 mem_cache_store (which uses dalli internally), unlike dalli_store, is not instrumented by default
-      def reset
-        Rails.cache.class.instrument = true
-        super
-      end
-    end
 
     class Subscriber < ActiveSupport::LogSubscriber
       # cache events are: read write fetch_hit generate delete read_multi increment decrement clear

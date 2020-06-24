@@ -1,5 +1,5 @@
 require 'minitest'
-require 'mocha/setup'
+require 'mocha/minitest'
 require 'minitest/pride'
 require 'minitest/autorun'
 
@@ -18,19 +18,11 @@ end
 require_relative '../lib/time_bandits'
 require "byebug"
 
-ActiveSupport::LogSubscriber.class_eval do
-  # need a logger, otherwise no data will be collected
-  def logger
-    @logger ||= ::Logger.new("/dev/null")
-  end
-end
+ActiveSupport::LogSubscriber.logger =::Logger.new("/dev/null")
 
 # fake Rails
 module Rails
   extend self
-  module VERSION
-    STRING = ActiveSupport::VERSION::STRING
-  end
   def cache
     @cache ||= ActiveSupport::Cache.lookup_store(:mem_cache_store)
   end

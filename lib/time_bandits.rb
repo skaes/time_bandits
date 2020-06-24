@@ -5,11 +5,7 @@ require 'thread_variables'
 module TimeBandits
 
   module TimeConsumers
-    if defined?(Rails) && Rails::VERSION::STRING < "3.0"
-      autoload :Database,          'time_bandits/time_consumers/database_rails2'
-    else
-      autoload :Database,          'time_bandits/time_consumers/database'
-    end
+    autoload :Database,          'time_bandits/time_consumers/database'
     autoload :GarbageCollection, 'time_bandits/time_consumers/garbage_collection'
     autoload :JMX,               'time_bandits/time_consumers/jmx'
     autoload :MemCache,          'time_bandits/time_consumers/mem_cache'
@@ -20,7 +16,7 @@ module TimeBandits
     autoload :Beetle,            'time_bandits/time_consumers/beetle'
   end
 
-  require 'time_bandits/railtie' if defined?(Rails) && Rails::VERSION::STRING >= "3.0"
+  require 'time_bandits/railtie' if defined?(Rails)
   require 'time_bandits/time_consumers/base_consumer'
 
   mattr_accessor :time_bandits

@@ -33,27 +33,11 @@ module TimeBandits
         def _get_gc_time; 0; end
       end
 
-      if GC.respond_to?(:collections)
-        def _get_collections; GC.collections; end
-      elsif GC.respond_to?(:count)
-        def _get_collections; GC.count; end
-      else
-        def _get_collections; 0; end
-      end
+      def _get_collections; GC.count; end
 
-      if ObjectSpace.respond_to?(:allocated_objects)
-        def _get_allocated_objects; ObjectSpace.allocated_objects; end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.2.0"
-        def _get_allocated_objects; GC.stat(:total_allocated_objects); end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.1.0"
-        def _get_allocated_objects; GC.stat(:total_allocated_object); end
-      else
-        def _get_allocated_objects; 0; end
-      end
+      def _get_allocated_objects; GC.stat(:total_allocated_objects); end
 
-      if GC.respond_to?(:allocated_size)
-        def _get_allocated_size; GC.allocated_size; end
-      elsif GC.respond_to?(:total_malloced_bytes)
+      if GC.respond_to?(:total_malloced_bytes)
         def _get_allocated_size; GC.total_malloced_bytes; end
       else
         def _get_allocated_size; 0; end
@@ -61,22 +45,14 @@ module TimeBandits
 
       if GC.respond_to?(:heap_slots)
         def _get_heap_slots; GC.heap_slots; end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.2.0"
-        def _get_heap_slots; GC.stat(:heap_live_slots) + GC.stat(:heap_free_slots) + GC.stat(:heap_final_slots); end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.1.0"
-        def _get_heap_slots; GC.stat(:heap_live_slot) + GC.stat(:heap_free_slot) + GC.stat(:heap_final_slot); end
       else
-        def _get_heap_slots; 0; end
+        def _get_heap_slots; GC.stat(:heap_live_slots) + GC.stat(:heap_free_slots) + GC.stat(:heap_final_slots); end
       end
 
       if GC.respond_to?(:heap_slots_live_after_last_gc)
         def live_data_set_size; GC.heap_slots_live_after_last_gc; end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.2.0"
-        def live_data_set_size; GC.stat(:heap_live_slots); end
-      elsif GC.respond_to?(:stat) && RUBY_VERSION >= "2.1.0"
-        def live_data_set_size; GC.stat(:heap_live_slot); end
       else
-        def live_data_set_size; 0; end
+        def live_data_set_size; GC.stat(:heap_live_slots); end
       end
 
       def reset

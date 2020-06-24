@@ -3,9 +3,6 @@
 # and the number of query cache hits
 # it needs to be adapted to each new rails version
 
-raise "time_bandits ActiveRecord monkey patch is not compatible with your rails version" unless
-  Rails::VERSION::STRING =~ /^(3\.[012]|4\.[012])|5\.[012]|6\.0/
-
 require "active_record/log_subscriber"
 
 module ActiveRecord
@@ -42,31 +39,7 @@ module ActiveRecord
       hits
     end
 
-    # Rails 4.1 uses method_added to automatically subscribe newly
-    # added methods. Since :render_bind and :sql are already defined,
-    # the net effect is that sql gets called twice. Therefore, we
-    # temporarily switch to protected mode and change it back later to
-    # public.
-
-    # Note that render_bind was added for Rails 4.0, and the implementation
-    # has changed since then, so we are careful to only redefine it if necessary.
-    unless instance_methods.include?(:render_bind)
-      protected
-      def render_bind(column, value)
-        if column
-          if column.type == :binary
-            value = "<#{value.bytesize} bytes of binary data>"
-          end
-          [column.name, value]
-        else
-          [nil, value]
-        end
-      end
-      public :render_bind
-      public
-    end
-
-    protected
+    remove_method :sql
     def sql(event)
       payload = event.payload
 
@@ -80,99 +53,25 @@ module ActiveRecord
 
       log_sql_statement(payload, event)
     end
-    public :sql
-    public
 
     private
-    if Rails::VERSION::STRING >= "5.1.5"
-      def log_sql_statement(payload, event)
-        name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
-        name  = "CACHE #{name}" if payload[:cached]
-        sql   = payload[:sql]
-        binds = nil
+    def log_sql_statement(payload, event)
+      name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
+      name  = "CACHE #{name}" if payload[:cached]
+      sql   = payload[:sql]
+      binds = nil
 
-        unless (payload[:binds] || []).empty?
-          casted_params = type_casted_binds(payload[:type_casted_binds])
-          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
-            render_bind(attr, value)
-          }.inspect
-        end
-
-        name = colorize_payload_name(name, payload[:name])
-        sql  = color(sql, sql_color(sql), true)
-
-        debug "  #{name}  #{sql}#{binds}"
+      unless (payload[:binds] || []).empty?
+        casted_params = type_casted_binds(payload[:type_casted_binds])
+        binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
+          render_bind(attr, value)
+        }.inspect
       end
-    elsif Rails::VERSION::STRING >= "5.0.7" && Rails::VERSION::STRING < "5.1.0"
-      def log_sql_statement(payload, event)
-        name = '%s (%.1fms)' % [payload[:name], event.duration]
-        sql  = payload[:sql].squeeze(' ')
-        binds = nil
 
-        unless (payload[:binds] || []).empty?
-          casted_params = type_casted_binds(payload[:type_casted_binds])
-          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
-            render_bind(attr, value)
-          }.inspect
-        end
+      name = colorize_payload_name(name, payload[:name])
+      sql  = color(sql, sql_color(sql), true)
 
-        name = colorize_payload_name(name, payload[:name])
-        sql  = color(sql, sql_color(sql), true)
-
-        debug "  #{name}  #{sql}#{binds}"
-      end
-    elsif Rails::VERSION::STRING >= "5.0.3"
-      def log_sql_statement(payload, event)
-        name = '%s (%.1fms)' % [payload[:name], event.duration]
-        sql  = payload[:sql].squeeze(' ')
-        binds = nil
-
-        unless (payload[:binds] || []).empty?
-          casted_params = type_casted_binds(payload[:binds], payload[:type_casted_binds])
-          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
-            render_bind(attr, value)
-          }.inspect
-        end
-
-        name = colorize_payload_name(name, payload[:name])
-        sql  = color(sql, sql_color(sql), true)
-
-        debug "  #{name}  #{sql}#{binds}"
-      end
-    elsif Rails::VERSION::STRING >= "5.0"
-      def log_sql_statement(payload, event)
-        name = '%s (%.1fms)' % [payload[:name], event.duration]
-        sql  = payload[:sql].squeeze(' ')
-        binds = nil
-
-        unless (payload[:binds] || []).empty?
-          binds = "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
-        end
-
-        name = colorize_payload_name(name, payload[:name])
-        sql  = color(sql, sql_color(sql), true)
-
-        debug "  #{name}  #{sql}#{binds}"
-      end
-    else
-      def log_sql_statement(payload, event)
-        name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
-        sql   = payload[:sql]
-        binds = nil
-
-        unless (payload[:binds] || []).empty?
-          binds = "  " + payload[:binds].map { |col,v| render_bind(col, v) }.inspect
-        end
-
-        if odd?
-          name = color(name, CYAN, true)
-          sql  = color(sql, nil, true)
-        else
-          name = color(name, MAGENTA, true)
-        end
-
-        debug "  #{name}  #{sql}#{binds}"
-      end
+      debug "  #{name}  #{sql}#{binds}"
     end
   end
 
@@ -180,11 +79,13 @@ module ActiveRecord
 
   module Railties
     module ControllerRuntime
+      remove_method :cleanup_view_runtime
       def cleanup_view_runtime
         # this method has been redefined to do nothing for activerecord on purpose
         super
       end
 
+      remove_method :append_info_to_payload
       def append_info_to_payload(payload)
         super
         if ActiveRecord::Base.connected?
@@ -194,6 +95,7 @@ module ActiveRecord
 
       module ClassMethods
         # this method has been redefined to do nothing for activerecord on purpose
+        remove_method :log_process_action
         def log_process_action(payload)
           super
         end

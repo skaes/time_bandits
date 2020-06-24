@@ -1,9 +1,17 @@
+require 'active_support/core_ext/time/conversions'
+require 'active_support/core_ext/object/blank'
+require 'active_support/log_subscriber'
+require 'action_dispatch/http/request'
+require 'rack/body_proxy'
+
 module TimeBandits
   module Rack
+    # Sets log tags, logs the request, calls the app, and flushes the logs.
     class Logger < ActiveSupport::LogSubscriber
-      def initialize(app, taggers=nil)
-        @app = app
-        @taggers = taggers || Rails.application.config.log_tags || []
+      def initialize(app, taggers = nil)
+        @app          = app
+        @taggers      = taggers || Rails.application.config.log_tags || []
+        @instrumenter = ActiveSupport::Notifications.instrumenter
       end
 
       def call(env)
@@ -16,15 +24,29 @@ module TimeBandits
         end
       end
 
-      protected
+    protected
 
       def call_app(request, env)
         start_time = Time.now
-        before_dispatch(request, env, start_time)
-        result = @app.call(env)
+        start(request, start_time)
+        resp = @app.call(env)
+        resp[2] = ::Rack::BodyProxy.new(resp[2]) { finish(request) }
+        resp
+      rescue
+        finish(request)
+        raise
       ensure
-        run_time = Time.now - start_time
-        after_dispatch(env, result, run_time)
+        completed(request, (Time.now - start_time) * 1000, resp)
+        ActiveSupport::LogSubscriber.flush_all!
+      end
+
+      # Started GET "/session/new" for 127.0.0.1 at 2012-09-26 14:51:42 -0700
+      def started_request_message(request, start_time=Time.now)
+        'Started %s "%s" for %s at %s' % [
+          request.request_method,
+          request.filtered_path,
+          request.ip,
+          start_time.to_default_s ]
       end
 
       def compute_tags(request)
@@ -40,28 +62,33 @@ module TimeBandits
         end
       end
 
-      def before_dispatch(request, env, start_time)
+      private
+
+      def start(request, start_time)
         TimeBandits.reset
         Thread.current.thread_variable_set(:time_bandits_completed_info, nil)
+        @instrumenter.start 'action_dispatch.request', request: request
 
-        path = request.filtered_path
-
-        debug ""
-        info "Started #{request.request_method} \"#{path}\" for #{request.ip} at #{start_time.to_default_s}"
+        logger.debug ""
+        logger.info started_request_message(request, start_time)
       end
 
-      def after_dispatch(env, result, run_time)
-        status = result ? result.first.to_i : 500
+      def completed(request, run_time, resp)
+        status = resp ? resp.first.to_i : 500
         completed_info = Thread.current.thread_variable_get(:time_bandits_completed_info)
         additions = completed_info[1] if completed_info
-
         message = "Completed #{status} #{::Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % run_time
         message << " (#{additions.join(' | ')})" unless additions.blank?
-        info message
-      ensure
-        ActiveSupport::LogSubscriber.flush_all!
+        logger.info message
       end
 
+      def finish(request)
+        @instrumenter.finish 'action_dispatch.request', request: request
+      end
+
+      def logger
+        @logger ||= Rails.logger
+      end
     end
   end
 end

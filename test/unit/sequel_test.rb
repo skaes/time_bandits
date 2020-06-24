@@ -32,7 +32,7 @@ class SequelTest < Test::Unit::TestCase
   end
 
   def sequel
-    @sequel ||= Sequel.connect('mysql2://localhost:3601')
+    @sequel ||= Sequel.connect('mysql2://root:@127.0.01:3601')
   end
 
   def metrics

@@ -4,45 +4,6 @@ module ActionController #:nodoc:
 
   module Instrumentation
 
-    # patch to ensure that the completed line is always written to the log.
-    # this is not necessary anymore with Rails 4 and higher.
-    def process_action(action, *args)
-      raw_payload = get_raw_payload
-      ActiveSupport::Notifications.instrument("start_processing.action_controller", raw_payload.dup)
-
-      exception = nil
-      result = ActiveSupport::Notifications.instrument("process_action.action_controller", raw_payload) do |payload|
-        begin
-          super
-        rescue Exception => exception
-          response.status = 500
-          nil
-        ensure
-          payload[:status] = response.status
-          append_info_to_payload(payload)
-        end
-      end
-      raise exception if exception
-      result
-    end unless Rails::VERSION::STRING >= "4.0"
-
-    # patch to ensure that render times are always recorded in the log.
-    # this is not necessary anymore with Rails 3 and up.
-    def render(*args)
-      render_output = nil
-      exception = nil
-      self.view_runtime = cleanup_view_runtime do
-        Benchmark.ms do
-          begin
-            render_output = super
-          rescue Exception => exception
-          end
-        end
-      end
-      raise exception if exception
-      render_output
-    end unless Rails::VERSION::STRING >= "3.0"
-
     def cleanup_view_runtime #:nodoc:
       consumed_before_rendering = TimeBandits.consumed
       runtime = yield
@@ -51,32 +12,6 @@ module ActionController #:nodoc:
     end
 
     private
-
-    if Rails::VERSION::STRING =~ /\A3\.[01]/
-      def get_raw_payload
-        {
-          :controller => self.class.name,
-          :action     => self.action_name,
-          :params     => request.filtered_parameters,
-          :formats    => request.formats.map(&:to_sym),
-          :method     => request.method,
-          :path       => (request.fullpath rescue "unknown")
-        }
-      end
-    elsif Rails::VERSION::STRING =~ /\A3\.2/
-      def get_raw_payload
-        {
-          :controller => self.class.name,
-          :action     => self.action_name,
-          :params     => request.filtered_parameters,
-          :format     => request.format.try(:ref),
-          :method     => request.method,
-          :path       => (request.fullpath rescue "unknown")
-        }
-      end
-    elsif Rails::VERSION::STRING < "3"
-      raise "time_bandits ActionController monkey patch is not compatible with your Rails version"
-    end
 
     module ClassMethods
       # patch to log rendering time with more precision
@@ -104,7 +39,7 @@ module ActionController #:nodoc:
 
       # this is an ugly hack to ensure completed lines show up in the test logs
       # TODO: move this code to some other place
-      return unless Rails.env.test? && Rails::VERSION::STRING >= "3.2"
+      return unless Rails.env.test?
 
       status = payload[:status]
       if status.nil? && payload[:exception].present?
