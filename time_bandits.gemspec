@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency("thread_variables")
-  s.add_runtime_dependency("activesupport", [">= 2.3.2"])
+  s.add_runtime_dependency("activesupport", [">= 5.2.4.3"])
 
   s.add_development_dependency("ansi")
   s.add_development_dependency("appraisal")
@@ -29,10 +29,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency("minitest", "~> 5.5")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mysql2")
-  s.add_development_dependency("rake", "~> 10.5.0")
+  s.add_development_dependency("rake")
   s.add_development_dependency("redis")
   s.add_development_dependency("sequel")
   s.add_development_dependency("activerecord")
-  s.add_development_dependency("beetle", ">= 0.4.6")
+  s.add_development_dependency("beetle", ">= 3.4.1")
 end
 
