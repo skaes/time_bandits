@@ -53,16 +53,16 @@ With these two new time consumers, the log line changes to
    b: number of bytes allocated by the ruby x_malloc call (#bytes)
    l: live data set size after last GC (#slots)
 
-Sidenote for Germans: you can use the word "Gesabbel" (eng: drivel) as a mnemonic here ;-)
+Side note for speakers of German: you can use the word "Gesabbel" (eng: drivel) as a mnemonic here ;-)
 
-It's realtively straightforward to write additional time consumers; the more difficult part of this is
+It's relatively straightforward to write additional time consumers; the more difficult part of this is
 monkey patching the code which you want to instrument. Have a look at consumers under
-lib/time_bandits/time_consumers and the corresponding patches under lib/time_bandits/monkey_patches.
+`lib/time_bandits/time_consumers` and the corresponding patches under `lib/time_bandits/monkey_patches`.
 
 
 ## Prerequisites
 
-Rails >= 3.x is required. The gem will raise an error if you try to use it with an incompatible
+ActiveSupport/Rails >= 5.2 is required. The gem will raise an error if you try to use it with an incompatible
 version.
 
 You'll need a ruby with the railsexpress GC patches applied, if you want to include GC and heap size
@@ -80,9 +80,14 @@ changed so much of the code that is is practically a full rewrite, hence we chan
 
 ## Running Tests
 
-In order for the test to run you need a running memcached, redis-server and mysql
+Run `docker-compose up` to start Redis, MySQL, RabbitMQ and Memached containers, then run `rake`.
+
 
 ## Release Notes
+
+## Version 0.12.0
+  - drops support for Rails versions before 5.2.0 and Ruby versions before 2.2.0
+  - makes it possible to use individual time bandits without Rails (e.g. in a Sinatra app)
 
 ## Version 0.11.0
   - supports rails 6.0.0
@@ -178,7 +183,7 @@ In order for the test to run you need a running memcached, redis-server and mysq
 
 ## License
 
-Copyright (c) 2009-2014 Stefan Kaes <skaes@railsexpress.de>
+Copyright (c) 2009-2020 Stefan Kaes <skaes@railsexpress.de>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
