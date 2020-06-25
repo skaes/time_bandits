@@ -31,8 +31,12 @@ class SequelTest < Test::Unit::TestCase
     assert_equal metrics[:db_time], TimeBandits.consumed
   end
 
+  def mysql_port
+    ENV['TRAVIS'] == "true" ? 3306 : 3601
+  end
+
   def sequel
-    @sequel ||= Sequel.connect('mysql2://root:@127.0.01:3601')
+    @sequel ||= Sequel.mysql2(host: "localhost", port: mysql_port, user: "root")
   end
 
   def metrics
