@@ -15,7 +15,7 @@ module TimeBandits
         # Rails 5 may trigger the on_load event several times.
         next if included_modules.include?(ActionController::TimeBanditry)
         # For some magic reason, the test above is always false, but I'll leave it in
-        # here, should rails every decide to change this behavior.
+        # here, should the Rails team ever decide to change this behavior.
 
         include ActionController::TimeBanditry
 
