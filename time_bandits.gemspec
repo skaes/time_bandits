@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency("thread_variables")
-  s.add_runtime_dependency("activesupport", [">= 5.2.4.3"])
+  s.add_runtime_dependency("activesupport", [">= 5.2.0"])
 
   s.add_development_dependency("ansi")
   s.add_development_dependency("appraisal")
