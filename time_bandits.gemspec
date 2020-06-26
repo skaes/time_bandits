@@ -12,6 +12,9 @@ Gem::Specification.new do |s|
   s.summary     = "Custom performance logging for Rails"
   s.description = "Rails Completed Line on Steroids"
   s.license     = 'MIT'
+  s.metadata = {
+    "changelog_uri" => "https://github.com/skaes/time_bandits/blob/master/README.md#release-notes"
+  }
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
