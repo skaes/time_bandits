@@ -7,7 +7,6 @@ rvm:
 before_install:
   - gem install bundler
 script: "bundle exec rake appraisal:test"
-sudo: true
 services:
   - redis-server
   - memcached
