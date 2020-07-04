@@ -41,9 +41,11 @@ module TimeBandits
         TimeBandits.add TimeBandits::TimeConsumers::Database
       end
 
-      # reset statistics info, so that for example the time for the first request handled
-      # by the dispatcher is correct.
+      # Reset statistics info, so that for example the time for the first request handled
+      # by the dispatcher is correct. Also: install GC time bandit here, as we want it to
+      # be the last one in the log line.
       app.config.after_initialize do
+        TimeBandits.add TimeBandits::TimeConsumers::GarbageCollection.instance if GC.respond_to? :enable_stats
         TimeBandits.reset
       end
 
