@@ -4,6 +4,8 @@
 
 Time Bandits is a gem plugin for Rails which enhances Rails' controller/view/db benchmark logging.
 
+[![Travis](https://travis-ci.org/skaes/time_bandits.svg?branch=master)](https://travis-ci.org/github/skaes/time_bandits)
+
 ## Usage
 
 Without configuration, the standard Rails 'Completed line' will change
