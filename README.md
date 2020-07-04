@@ -85,6 +85,10 @@ Run `docker-compose up` to start Redis, MySQL, RabbitMQ and Memached containers,
 
 ## Release Notes
 
+## Version 0.12.1
+  - support having the rails gem in a bundle without activating the time bandits railtie
+  - automatically install the garbage collection time bandit in rails applications
+
 ## Version 0.12.0
   - drops support for Rails versions before 5.2.0 and Ruby versions before 2.2.0
   - makes it possible to use individual time bandits without Rails (e.g. in a Sinatra app)
