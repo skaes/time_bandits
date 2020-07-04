@@ -16,7 +16,7 @@ module TimeBandits
     autoload :Beetle,            'time_bandits/time_consumers/beetle'
   end
 
-  require 'time_bandits/railtie' if defined?(Rails)
+  require 'time_bandits/railtie' if defined?(Rails::Railtie)
   require 'time_bandits/time_consumers/base_consumer'
 
   mattr_accessor :time_bandits
