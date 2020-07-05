@@ -36,20 +36,6 @@ module ActionController #:nodoc:
         :time_bandits_completed_info,
         [ event.duration, additions, payload[:view_runtime], "#{payload[:controller]}##{payload[:action]}" ]
       )
-
-      # this is an ugly hack to ensure completed lines show up in the test logs
-      # TODO: move this code to some other place
-      return unless Rails.env.test?
-
-      status = payload[:status]
-      if status.nil? && payload[:exception].present?
-        exception_class_name = payload[:exception].first
-        status = ActionDispatch::ExceptionWrapper.status_code_for_exception(exception_class_name)
-      end
-      message = "Completed #{status} #{Rack::Utils::HTTP_STATUS_CODES[status]} in %.1fms" % event.duration
-      message << " (#{additions.join(" | ")})" unless additions.blank?
-
-      info(message)
     end
   end
 
