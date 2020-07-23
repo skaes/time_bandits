@@ -25,9 +25,9 @@ module TimeBandits
           # Rails 5 fires on_load events multiple times, so we need to protect against endless recursion here
           next if ActionController::TestCase::Behavior.instance_methods.include?(:process_without_time_bandits)
           module ActionController::TestCase::Behavior
-            def process_with_time_bandits(*args)
+            def process_with_time_bandits(*args, **kwargs)
               TimeBandits.reset
-              process_without_time_bandits(*args)
+              process_without_time_bandits(*args, **kwargs)
             end
             alias_method :process_without_time_bandits, :process
             alias_method :process, :process_with_time_bandits
