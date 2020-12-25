@@ -11,18 +11,18 @@ services:
 
   memcached:
     container_name: memcached
-    image: memcached:1.6.6
+    image: memcached:1.6.8
     ports:
       - "11211:11211"
 
   redis:
     container_name: redis
-    image: redis:5.0.9
+    image: redis:5.0
     ports:
       - "6379:6379"
 
   rabbitmq:
     container_name: rabbitmq
-    image: rabbitmq:3.8.5
+    image: rabbitmq:3.8
     ports:
       - "5672:5672"
