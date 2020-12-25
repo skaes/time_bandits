@@ -87,6 +87,9 @@ Run `docker-compose up` to start Redis, MySQL, RabbitMQ and Memached containers,
 
 ## Release Notes
 
+## Version 0.12.3
+  -  suppress Ruby 2.7 warnings about keyword parameters in controller tests
+
 ## Version 0.12.2
   -  fixed that completed line was logged twice in Rails test environment
 
