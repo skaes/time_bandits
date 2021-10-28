@@ -15,9 +15,30 @@ services:
 addons:
   apt:
     sources:
-      - sourceline: "deb https://packages.erlang-solutions.com/ubuntu bionic contrib"
-        key_url: "https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc"
-      - sourceline: "deb https://dl.bintray.com/rabbitmq/debian bionic main"
-        key_url: "https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc"
+      - sourceline: "deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu bionic main"
+        key_url: "https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49CC4BBE5B.key"
+      - sourceline: "deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/deb/ubuntu bionic main"
+        key_url: "https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49CC4BBE5B.key"
+      - sourceline: "deb https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu bionic main"
+        key_url: "https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key"
+      - sourceline: "deb-src https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/deb/ubuntu bionic main"
+        key_url: "https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/gpg.9F4587F226208342.key"
     packages:
+      - erlang-base
+      - erlang-asn1
+      - erlang-crypto
+      - erlang-eldap
+      - erlang-ftp
+      - erlang-inets
+      - erlang-mnesia
+      - erlang-os-mon
+      - erlang-parsetools
+      - erlang-public-key
+      - erlang-runtime-tools
+      - erlang-snmp
+      - erlang-ssl
+      - erlang-syntax-tools
+      - erlang-tftp
+      - erlang-tools
+      - erlang-xmerl
       - rabbitmq-server
