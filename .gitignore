@@ -6,3 +6,4 @@ pkg/*
 .DS_Store
 .rvmrc
 dump.rdb
+gemfiles/*
