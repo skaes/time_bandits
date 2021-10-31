@@ -27,7 +27,7 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
 
       - name: Install dependencies
-        run: sudo apt-get install libzmq3-dev
+        run: sudo apt-get install libsasl2-dev
 
       - name: Install gems
         run: bundle install
