@@ -33,13 +33,13 @@ jobs:
         run: bundle install
 
       - name: Run tests
-        run: bundle exec rake test integration
+        run: bundle exec rake test
 
       - name: Install appraisals
         run: bundle exec appraisal install
 
       - name: Run appraisals
-        run: bundle exec appraisal rake test integration
+        run: bundle exec appraisal rake test
 
       - name: Stop containers
         if: always()
