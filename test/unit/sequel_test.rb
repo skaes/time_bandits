@@ -32,7 +32,7 @@ class SequelTest < Test::Unit::TestCase
   end
 
   def mysql_port
-    ENV['TRAVIS'] == "true" ? 3306 : 3601
+    (ENV['TRAVIS'] == "true" || ENV['GITHUB_ACTIONS'] == "true") ? 3306 : 3601
   end
 
   def sequel
