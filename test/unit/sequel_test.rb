@@ -32,11 +32,11 @@ class SequelTest < Test::Unit::TestCase
   end
 
   def mysql_port
-    ENV['TRAVIS'] == "true" ? 3306 : 3601
+    3601
   end
 
   def sequel
-    @sequel ||= Sequel.mysql2(host: "localhost", port: mysql_port, user: "root")
+    @sequel ||= Sequel.mysql2(host: "127.0.0.1", port: mysql_port, user: "root")
   end
 
   def metrics
