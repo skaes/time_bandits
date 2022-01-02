@@ -7,7 +7,8 @@ module TimeBandits
   class Railtie < Rails::Railtie
 
     initializer "time_bandits" do |app|
-      app.config.middleware.swap(Rails::Rack::Logger, TimeBandits::Rack::Logger)
+      app.config.middleware.insert_after(Rails::Rack::Logger, TimeBandits::Rack::Logger)
+      app.config.middleware.delete(Rails::Rack::Logger)
 
       ActiveSupport.on_load(:action_controller) do
         require 'time_bandits/monkey_patches/action_controller'
