@@ -29,6 +29,8 @@ module TimeBandits
 
       if GC.respond_to?(:time)
         def _get_gc_time; GC.time; end
+      elsif GC.respond_to?(:total_time)
+        def _get_gc_time; GC.total_time / 1000; end
       else
         def _get_gc_time; 0; end
       end
