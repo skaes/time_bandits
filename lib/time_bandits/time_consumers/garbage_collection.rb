@@ -42,7 +42,8 @@ module TimeBandits
       if GC.respond_to?(:total_malloced_bytes)
         def _get_allocated_size; GC.total_malloced_bytes; end
       else
-        def _get_allocated_size; 0; end
+        # this will wrap around :malloc_increase_bytes_limit so is not really correct
+        def _get_allocated_size; GC.stat(:malloc_increase_bytes); end
       end
 
       if GC.respond_to?(:heap_slots)
@@ -83,7 +84,9 @@ module TimeBandits
       end
 
       def allocated_size
-        _get_allocated_size - @allocated_size
+        new_size = _get_allocated_size
+        old_size = @allocated_size
+        new_size <= old_size ? new_size : new_size - old_size
       end
 
       def heap_growth
