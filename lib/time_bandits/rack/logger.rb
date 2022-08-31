@@ -27,7 +27,7 @@ module TimeBandits
     protected
 
       def call_app(request, env)
-        start_time = Time.now
+        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         start(request, start_time)
         resp = @app.call(env)
         resp[2] = ::Rack::BodyProxy.new(resp[2]) { finish(request) }
@@ -36,12 +36,13 @@ module TimeBandits
         finish(request)
         raise
       ensure
-        completed(request, (Time.now - start_time) * 1000, resp)
+        end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        completed(request, (end_time - start_time) * 1000, resp)
         ActiveSupport::LogSubscriber.flush_all!
       end
 
       # Started GET "/session/new" for 127.0.0.1 at 2012-09-26 14:51:42 -0700
-      def started_request_message(request, start_time=Time.now)
+      def started_request_message(request, start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC))
         'Started %s "%s" for %s at %s' % [
           request.request_method,
           request.filtered_path,
