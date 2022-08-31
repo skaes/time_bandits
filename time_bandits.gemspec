@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("mocha")
   s.add_development_dependency("mysql2")
   s.add_development_dependency("rake")
-  s.add_development_dependency("redis")
+  s.add_development_dependency("redis", "< 5.0")
   s.add_development_dependency("sequel")
   s.add_development_dependency("activerecord")
   s.add_development_dependency("beetle", ">= 3.4.1")
