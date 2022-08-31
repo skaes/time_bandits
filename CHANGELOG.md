@@ -1,8 +1,11 @@
 # CHANGELOG
 
-## Next
+## Version 0.12.6
 * use ruby 3.1.1 in GitHub actions
 * updated appraisals
+* restrict Redis gem to a version before 5.0 until 5.x has become
+  stable
+* use monotonic clocks for time measurements
 
 ## Version 0.12.5
 * use GC.stat(:malloc_increase_bytes) to measure allocated bytes as fallback
