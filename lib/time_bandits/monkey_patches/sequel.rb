@@ -12,10 +12,11 @@ Sequel::Database.class_eval do
 
     def log_connection_yield(*args, &block)
       begin
-        start = Time.now
+        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         _orig_log_connection_yield(*args, &block)
       ensure
-        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: Time.now - start)
+        end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: end_time - start_time)
       end
     end
 
@@ -25,10 +26,11 @@ Sequel::Database.class_eval do
 
     def log_yield(*args, &block)
       begin
-        start = Time.now
+        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         _orig_log_yield(*args, &block)
       ensure
-        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: Time.now - start)
+        end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        ActiveSupport::Notifications.instrument('duration.sequel', durationInSeconds: end_time - start_time)
       end
     end
 
