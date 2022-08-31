@@ -1,6 +1,9 @@
 # CHANGELOG
 
 ## Version 0.12.6
+* logging start time requires a real time, not a monotonic clock
+
+## Version 0.12.6
 * use ruby 3.1.1 in GitHub actions
 * updated appraisals
 * restrict Redis gem to a version before 5.0 until 5.x has become
