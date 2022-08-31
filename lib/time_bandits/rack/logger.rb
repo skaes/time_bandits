@@ -42,7 +42,7 @@ module TimeBandits
       end
 
       # Started GET "/session/new" for 127.0.0.1 at 2012-09-26 14:51:42 -0700
-      def started_request_message(request, start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC))
+      def started_request_message(request, start_time = Time.now)
         'Started %s "%s" for %s at %s' % [
           request.request_method,
           request.filtered_path,
