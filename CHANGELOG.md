@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## Version 0.12.6
+## 0.13.0
+* Support redis 5.0.
+
+## Version 0.12.7
 * logging start time requires a real time, not a monotonic clock
 
 ## Version 0.12.6
