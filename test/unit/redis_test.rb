@@ -54,10 +54,10 @@ class RedisTest < Test::Unit::TestCase
   private
   def pipelined_work(type = :pipelined)
     TimeBandits.reset
-    @redis.send(type) do
-      @redis.get("foo")
-      @redis.set("bar", 1)
-      @redis.hgetall("baz")
+    @redis.send(type) do |transaction|
+      transaction.get("foo")
+      transaction.set("bar", 1)
+      transaction.hgetall("baz")
     end
   end
 
