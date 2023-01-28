@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.13.1
+* Fixed last place that tried to log a monotonic clock timestamp
+  instead of a Time instance.
+
 ## 0.13.0
 * Support redis 5.0.
 
