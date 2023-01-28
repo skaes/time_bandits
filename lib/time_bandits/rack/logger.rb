@@ -28,7 +28,7 @@ module TimeBandits
 
       def call_app(request, env)
         start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-        start(request, start_time)
+        start(request, Time.now)
         resp = @app.call(env)
         resp[2] = ::Rack::BodyProxy.new(resp[2]) { finish(request) }
         resp
