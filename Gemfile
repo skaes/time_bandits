@@ -6,4 +6,4 @@ gemspec
 gem "hiredis-client"
 
 # Use patched appraisal gem until it is fixed upstream.
-gem "appraisal", git: "https://github.com/toy/appraisal.git", ref: "55334f67f96448c2209648a20ccaeb3800a6ab0f"
+gem "appraisal", git: "https://github.com/thoughtbot/appraisal.git", ref: "0c855ae0da89fec74b4d1a01801c55b0e72496d4"
