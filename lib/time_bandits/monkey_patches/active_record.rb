@@ -68,29 +68,60 @@ module ActiveRecord
 
     private
     def log_sql_statement(payload, event)
-      name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
+      name = if payload[:async]
+        "ASYNC #{payload[:name]} (#{payload[:lock_wait].round(1)}ms) (db time #{event.duration.round(1)}ms)"
+      else
+        "#{payload[:name]} (#{event.duration.round(1)}ms)"
+      end
       name  = "CACHE #{name}" if payload[:cached]
       sql   = payload[:sql]
-      binds = nil
-
-      unless (payload[:binds] || []).empty?
-        casted_params = type_casted_binds(payload[:type_casted_binds])
-        binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
-          render_bind(attr, value)
-        }.inspect
-      end
+      binds = render_binds(payload)
 
       name = colorize_payload_name(name, payload[:name])
-      sql  = colorize_sql(sql)
+      sql  = colorize_sql(sql) if colorize_logging
 
       debug "  #{name}  #{sql}#{binds}"
     end
 
     if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("7.1.0")
+      def render_binds(payload)
+        binds = nil
+        if payload[:binds]&.any?
+          casted_params = type_casted_binds(payload[:type_casted_binds])
+
+          binds = []
+          payload[:binds].each_with_index do |attr, i|
+            attribute_name = if attr.respond_to?(:name)
+              attr.name
+            elsif attr.respond_to?(:[]) && attr[i].respond_to?(:name)
+              attr[i].name
+            else
+              nil
+            end
+
+            filtered_params = filter(attribute_name, casted_params[i])
+
+            binds << render_bind(attr, filtered_params)
+          end
+          binds = binds.inspect
+          binds.prepend("  ")
+        end
+        return binds
+      end
       def colorize_sql(sql)
         color(sql, sql_color(sql), bold: true)
       end
     else
+      def render_binds(payload)
+        binds = nil
+        unless (payload[:binds] || []).empty?
+          casted_params = type_casted_binds(payload[:type_casted_binds])
+          binds = "  " + payload[:binds].zip(casted_params).map { |attr, value|
+            render_bind(attr, value)
+          }.inspect
+        end
+        return binds
+      end
       def colorize_sql(sql)
         color(sql, sql_color(sql), true)
       end
