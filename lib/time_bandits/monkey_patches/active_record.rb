@@ -9,6 +9,18 @@ module ActiveRecord
   class LogSubscriber
     IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"] unless defined?(IGNORE_PAYLOAD_NAMES)
 
+    if ActiveRecord::VERSION::STRING >= Gem::Version.new("7.1.0")
+      def self.reset_runtime
+        ActiveRecord::RuntimeRegistry.reset
+      end
+      def self.runtime
+        ActiveRecord::RuntimeRegistry.sql_runtime
+      end
+      def self.runtime=(value)
+        ActiveRecord::RuntimeRegistry.sql_runtime = value
+      end
+    end
+
     def self.call_count=(value)
       Thread.current.thread_variable_set(:active_record_sql_call_count, value)
     end
@@ -69,9 +81,19 @@ module ActiveRecord
       end
 
       name = colorize_payload_name(name, payload[:name])
-      sql  = color(sql, sql_color(sql), true)
+      sql  = colorize_sql(sql)
 
       debug "  #{name}  #{sql}#{binds}"
+    end
+
+    if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("7.1.0")
+      def colorize_sql(sql)
+        color(sql, sql_color(sql), bold: true)
+      end
+    else
+      def colorize_sql(sql)
+        color(sql, sql_color(sql), true)
+      end
     end
   end
 

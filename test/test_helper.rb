@@ -23,6 +23,7 @@ ActiveSupport::LogSubscriber.logger =::Logger.new("/dev/null")
 # fake Rails
 module Rails
   extend self
+  ActiveSupport::Cache.format_version = 7.1 if Gem::Version.new(ActiveSupport::VERSION::STRING) >= Gem::Version.new("7.1.0")
   def cache
     @cache ||= ActiveSupport::Cache.lookup_store(:mem_cache_store)
   end
