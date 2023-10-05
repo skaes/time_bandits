@@ -9,7 +9,7 @@ module ActiveRecord
   class LogSubscriber
     IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"] unless defined?(IGNORE_PAYLOAD_NAMES)
 
-    if ActiveRecord::VERSION::STRING >= Gem::Version.new("7.1.0")
+    if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("7.1.0")
       def self.reset_runtime
         ActiveRecord::RuntimeRegistry.reset
       end
