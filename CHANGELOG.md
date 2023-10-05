@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.14.0
+
+* Support Rails 7.1.0.
+
 ## 0.13.1
 * Fixed last place that tried to log a monotonic clock timestamp
   instead of a Time instance.
