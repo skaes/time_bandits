@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.14.1
+
+* Fixed that ActiveReccord metrics where only collected at log level DEBUG.
+
 ## 0.14.0
 
 * Support Rails 7.1.0.
