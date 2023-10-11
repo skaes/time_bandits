@@ -13,6 +13,18 @@ module TimeBandits
       fields :time, :calls, :sql_query_cache_hits
       format "ActiveRecord: %.3fms(%dq,%dh)", :time, :calls, :sql_query_cache_hits
 
+      class << self
+        if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("7.1.0")
+          def metrics_store
+            ActiveRecord::RuntimeRegistry
+          end
+        else
+          def metrics_store
+            ActiveRecord::LogSubscriber
+          end
+        end
+      end
+
       def reset
         reset_stats
         super
@@ -27,13 +39,13 @@ module TimeBandits
       end
 
       def current_runtime
-        Database.instance.time + ActiveRecord::LogSubscriber.runtime
+        Database.instance.time + self.class.metrics_store.runtime
       end
 
       private
 
       def reset_stats
-        s = ActiveRecord::LogSubscriber
+        s = self.class.metrics_store
         hits  = s.reset_query_cache_hits
         calls = s.reset_call_count
         time  = s.reset_runtime

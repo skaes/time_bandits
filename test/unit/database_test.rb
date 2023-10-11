@@ -10,6 +10,15 @@ class DatabaseTest < Test::Unit::TestCase
     TimeBandits.reset
     @old_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = Logger.new($stdout)
+    ActiveRecord::Base.logger.level = Logger::DEBUG
+
+    ActiveRecord::Base.establish_connection(
+      adapter:  "mysql2",
+      username: "root",
+      encoding: "utf8",
+      host: ENV['MYSQL_HOST'] || "127.0.0.1",
+      port: (ENV['MYSQL_PORT'] || 3601).to_i
+    )
   end
 
   def teardown
@@ -28,18 +37,18 @@ class DatabaseTest < Test::Unit::TestCase
   end
 
   test "formatting" do
-    log_subscriber.runtime += 1.234
-    log_subscriber.call_count += 3
-    log_subscriber.query_cache_hits += 1
+    metrics_store.runtime += 1.234
+    metrics_store.call_count += 3
+    metrics_store.query_cache_hits += 1
     TimeBandits.consumed
     assert_equal "ActiveRecord: 1.234ms(3q,1h)", TimeBandits.runtime
   end
 
   test "accessing current runtime" do
-    log_subscriber.runtime += 1.234
+    metrics_store.runtime += 1.234
     assert_equal 1.234, TimeBandits.consumed
-    assert_equal 0, log_subscriber.runtime
-    log_subscriber.runtime += 4.0
+    assert_equal 0, metrics_store.runtime
+    metrics_store.runtime += 4.0
     assert_equal 5.234, bandit.current_runtime
     assert_equal "ActiveRecord: 1.234ms(0q,0h)", TimeBandits.runtime
   end
@@ -52,10 +61,36 @@ class DatabaseTest < Test::Unit::TestCase
     assert_nil log_subscriber.new.sql(event)
   end
 
+  test "instrumentation records runtimes at log level debug" do
+    ActiveRecord::Base.logger.stubs(:debug)
+    ActiveRecord::Base.connection.execute "SELECT 1"
+    bandit.consumed
+    assert(bandit.current_runtime > 0)
+    # 2 calls, because one configures the connection
+    assert_equal 2, bandit.calls
+    assert_equal 0, bandit.sql_query_cache_hits
+  end
+
+  test "instrumentation records runtimes at log level error" do
+    skip if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("7.1.0")
+    ActiveRecord::Base.logger.level = Logger::ERROR
+    ActiveRecord::LogSubscriber.expects(:sql).never
+    ActiveRecord::Base.connection.execute "SELECT 1"
+    bandit.consumed
+    assert(bandit.current_runtime > 0)
+    # 2 calls, because one configures the connection
+    assert_equal 2, bandit.calls
+    assert_equal 0, bandit.sql_query_cache_hits
+  end
+
   private
 
   def bandit
     TimeBandits::TimeConsumers::Database.instance
+  end
+
+  def metrics_store
+    TimeBandits::TimeConsumers::Database.metrics_store
   end
 
   def log_subscriber
