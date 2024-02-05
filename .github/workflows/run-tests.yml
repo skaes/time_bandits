@@ -16,7 +16,7 @@ jobs:
         ruby-version: [3.2.2, 3.1.4, 3.0.6, 2.7.8]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Start containers
         run: docker-compose -f docker-compose.yml up -d
