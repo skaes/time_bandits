@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class MemcachedTest < Test::Unit::TestCase
   def setup
+    skip "memcached is currently not supported on Ruby #{RUBY_VERSION} as the gem does not compile" unless RUBY_VERSION < "3.3.0"
     TimeBandits.time_bandits = []
     TimeBandits.add TimeBandits::TimeConsumers::Memcached
     TimeBandits.reset
