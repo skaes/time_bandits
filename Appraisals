@@ -1,7 +1,7 @@
 appraisals = [
   "6.1.7.7",
-  "7.0.8.1",
-  "7.1.3.2"
+  "7.0.8.3",
+  "7.1.3.3"
 ]
 
 appraisals.each do |rails_version|
