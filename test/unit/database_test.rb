@@ -46,6 +46,8 @@ class DatabaseTest < Test::Unit::TestCase
 
   test "accessing current runtime" do
     metrics_store.runtime += 1.234
+    assert_equal 1.234, metrics_store.runtime
+    assert_equal 1.234, bandit.current_runtime
     assert_equal 1.234, TimeBandits.consumed
     assert_equal 0, metrics_store.runtime
     metrics_store.runtime += 4.0
@@ -66,8 +68,13 @@ class DatabaseTest < Test::Unit::TestCase
     ActiveRecord::Base.connection.execute "SELECT 1"
     bandit.consumed
     assert(bandit.current_runtime > 0)
-    # 2 calls, because one configures the connection
-    assert_equal 2, bandit.calls
+    if ActiveRecord::VERSION::STRING =~ /\A7.2\..*\Z/
+      # registry ingores schema calls now
+      assert_equal 1, bandit.calls
+    else
+      # 2 calls, because one configures the connection
+      assert_equal 2, bandit.calls
+    end
     assert_equal 0, bandit.sql_query_cache_hits
   end
 
@@ -75,11 +82,17 @@ class DatabaseTest < Test::Unit::TestCase
     skip if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("7.1.0")
     ActiveRecord::Base.logger.level = Logger::ERROR
     ActiveRecord::LogSubscriber.expects(:sql).never
+    assert_equal 0, bandit.calls
     ActiveRecord::Base.connection.execute "SELECT 1"
     bandit.consumed
     assert(bandit.current_runtime > 0)
-    # 2 calls, because one configures the connection
-    assert_equal 2, bandit.calls
+    if ActiveRecord::VERSION::STRING =~ /\A7.2\..*\Z/
+      # registry ingores schema calls now
+      assert_equal 1, bandit.calls
+    else
+      # 2 calls, because one configures the connection
+      assert_equal 2, bandit.calls
+    end
     assert_equal 0, bandit.sql_query_cache_hits
   end
 
