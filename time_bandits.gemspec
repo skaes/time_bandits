@@ -23,5 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency("thread_variables")
   s.add_runtime_dependency("activesupport", [">= 5.2.0"])
+  s.add_runtime_dependency("base64")
+  s.add_runtime_dependency("mutex_m")
 end
 
