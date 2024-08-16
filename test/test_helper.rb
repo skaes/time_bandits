@@ -1,6 +1,6 @@
 require 'minitest'
 require 'mocha/minitest'
-require 'minitest/pride'
+require 'minitest/pride' if $stdout.tty?
 require 'minitest/autorun'
 
 require 'active_support/testing/declarative'
