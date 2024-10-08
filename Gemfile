@@ -17,5 +17,7 @@ gem "redis"
 gem "sequel"
 gem "activerecord"
 gem "beetle", ">= 3.4.1"
+gem "ostruct"
+gem "logger"
 
 gem "hiredis-client"
