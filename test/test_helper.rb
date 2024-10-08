@@ -1,7 +1,13 @@
 require 'minitest'
 require 'mocha/minitest'
-require 'minitest/pride' if $stdout.tty?
 require 'minitest/autorun'
+
+require 'minitest/reporters'
+if ENV['MINITEST_REPORTER']
+  Minitest::Reporters.use!
+else
+  Minitest::Reporters.use!([Minitest::Reporters::DefaultReporter.new])
+end
 
 require 'active_support/testing/declarative'
 module Test
