@@ -68,7 +68,7 @@ class DatabaseTest < Test::Unit::TestCase
     ActiveRecord::Base.connection.execute "SELECT 1"
     bandit.consumed
     assert(bandit.current_runtime > 0)
-    if ActiveRecord::VERSION::STRING =~ /\A7.2\..*\Z/
+    if ActiveRecord::VERSION::STRING >=  Gem::Version.new("7.2.0")
       # registry ingores schema calls now
       assert_equal 1, bandit.calls
     else
@@ -86,7 +86,7 @@ class DatabaseTest < Test::Unit::TestCase
     ActiveRecord::Base.connection.execute "SELECT 1"
     bandit.consumed
     assert(bandit.current_runtime > 0)
-    if ActiveRecord::VERSION::STRING =~ /\A7.2\..*\Z/
+    if ActiveRecord::VERSION::STRING >= Gem::Version.new("7.2.0")
       # registry ingores schema calls now
       assert_equal 1, bandit.calls
     else
