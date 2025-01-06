@@ -13,6 +13,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            ruby-version: 3.4.1
+          - os: ubuntu-latest
             ruby-version: 3.3.6
           - os: ubuntu-20.04
             ruby-version: 3.2.5
