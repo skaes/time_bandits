@@ -35,7 +35,7 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
 
       - name: Install dependencies
-        run: sudo apt-get install libsasl2-dev
+        run: sudo apt-get install libsasl2-dev libmysqlclient-dev
 
       - name: Install gems
         run: bundle install
