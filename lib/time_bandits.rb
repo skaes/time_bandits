@@ -1,3 +1,4 @@
+require 'logger'
 require 'active_support'
 require 'active_support/core_ext'
 require 'thread_variables'
