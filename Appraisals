@@ -9,7 +9,7 @@ if RUBY_VERSION >= "3.1"
 end
 
 if RUBY_VERSION >= "3.2"
-  appraisals << "8.0.0.1"
+  appraisals << "8.0.2"
 end
 
 appraisals.each do |rails_version|
