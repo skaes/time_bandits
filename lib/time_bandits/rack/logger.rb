@@ -12,6 +12,7 @@ module TimeBandits
         @app          = app
         @taggers      = taggers || Rails.application.config.log_tags || []
         @instrumenter = ActiveSupport::Notifications.instrumenter
+        @use_to_default_s = Gem::Version.new(Rails::VERSION::STRING) < Gem::Version.new("7.1.0")
       end
 
       def call(env)
@@ -43,11 +44,12 @@ module TimeBandits
 
       # Started GET "/session/new" for 127.0.0.1 at 2012-09-26 14:51:42 -0700
       def started_request_message(request, start_time = Time.now)
+        start_time_str = @use_to_default_s ? start_time.to_default_s : start_time.to_s
         'Started %s "%s" for %s at %s' % [
           request.request_method,
           request.filtered_path,
           request.ip,
-          start_time.to_default_s ]
+          start_time_str ]
       end
 
       def compute_tags(request)
