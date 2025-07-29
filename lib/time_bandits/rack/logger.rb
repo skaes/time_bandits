@@ -47,7 +47,7 @@ module TimeBandits
           request.request_method,
           request.filtered_path,
           request.ip,
-          start_time.to_default_s ]
+          start_time.to_s ]
       end
 
       def compute_tags(request)
